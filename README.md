@@ -232,4 +232,3 @@ Your site will be live at: `https://fixit-prod-71fcb.web.app`
 ---
 
 **Need Help?** Check the Firebase documentation or contact Caleb Owen.
-# fixitqc-website
