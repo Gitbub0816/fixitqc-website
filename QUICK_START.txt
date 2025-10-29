@@ -1,0 +1,150 @@
+╔════════════════════════════════════════════════════════════╗
+║                  FixIt QC v7.0 Quick Start                 ║
+╚════════════════════════════════════════════════════════════╝
+
+🚀 GET STARTED IN 3 STEPS:
+
+┌─ STEP 1: Add Your Logo ─────────────────────────────────┐
+│                                                           │
+│  1. Find the logo image you uploaded (with turbine,      │
+│     gear, and oil drop)                                   │
+│                                                           │
+│  2. Save it as: assets/img/fixitqc-logo.png             │
+│                                                           │
+│  3. That's it! Your logo will appear on all pages        │
+│                                                           │
+└───────────────────────────────────────────────────────────┘
+
+┌─ STEP 2: Test Locally ──────────────────────────────────┐
+│                                                           │
+│  Open your terminal and run:                             │
+│                                                           │
+│    python3 -m http.server 8000                           │
+│                                                           │
+│  Then open: http://localhost:8000                        │
+│                                                           │
+│  Try these features:                                     │
+│    ✓ Click hamburger menu to see icon navigation        │
+│    ✓ Hover over glass cards to see glow change          │
+│    ✓ Navigate to Admin page                             │
+│    ✓ Try adding/editing users and equipment             │
+│                                                           │
+└───────────────────────────────────────────────────────────┘
+
+┌─ STEP 3: Deploy to Firebase ────────────────────────────┐
+│                                                           │
+│  In your terminal:                                       │
+│                                                           │
+│    firebase login                                        │
+│    firebase deploy --only hosting                        │
+│                                                           │
+│  Your site will be live at:                             │
+│  https://fixit-prod-71fcb.web.app                       │
+│                                                           │
+└───────────────────────────────────────────────────────────┘
+
+
+📋 WHAT'S INCLUDED:
+
+  ✅ 6 Public Pages (index, features, pricing, etc.)
+  ✅ Admin Panel with full user & equipment management
+  ✅ 10 pre-loaded users (3 admins, 6 techs, 1 user)
+  ✅ 8 pre-loaded equipment items
+  ✅ Icon-based navigation (no emojis!)
+  ✅ Glass cards with violet/orange glow effects
+  ✅ Fully responsive mobile design
+  ✅ Works in demo mode (no Firebase setup needed)
+
+
+🎯 KEY FEATURES TO TEST:
+
+  Admin Panel → Users Tab:
+    • Click "Add User" to create new users
+    • Click "Edit" to modify user details
+    • Click "Promote" to upgrade user roles
+    • Click "Delete" to remove users
+
+  Admin Panel → Equipment Tab:
+    • Click "Add Equipment" to add new items
+    • Click "Edit" to modify equipment
+    • Click "Delete" to remove equipment
+    • Watch status indicators change colors
+
+  Navigation Menu:
+    • Click hamburger (☰) icon in top-right
+    • Hover over menu items to see orange glow
+    • Notice SVG icons instead of emojis
+
+
+🎨 DESIGN SYSTEM:
+
+  Colors:
+    • Orange/Copper (#EC9C42) - Primary accent
+    • Violet (#8B5CF6) - Secondary accent
+    • Dark background (#101318)
+
+  Glass Cards:
+    • Default: Violet backglow
+    • Hover: Orange glow
+    • Smooth transitions
+
+  Icons:
+    • Professional SVG icons
+    • Orange color
+    • 20x20px size
+
+
+📁 FILE STRUCTURE:
+
+  fixitqc-site/
+  ├── index.html              ← Homepage
+  ├── features.html           ← Features page
+  ├── pricing.html            ← Pricing page
+  ├── screenshots.html        ← Gallery
+  ├── contact.html            ← Contact form
+  ├── login.html              ← Admin login
+  ├── admin.html              ← Admin panel ⭐
+  ├── assets/
+  │   ├── css/site.css        ← All styles
+  │   ├── js/
+  │   │   ├── site.js         ← Menu logic
+  │   │   ├── admin.mjs       ← Admin logic
+  │   │   └── login.mjs       ← Login logic
+  │   └── img/
+  │       └── fixitqc-logo.png ← ADD YOUR LOGO HERE
+  ├── firebase.json           ← Hosting config
+  └── README.md               ← Full documentation
+
+
+💡 PRO TIPS:
+
+  1. The admin panel works WITHOUT Firebase setup
+     (it's in demo mode by default)
+
+  2. All user/equipment data is stored in memory
+     (resets when you refresh the page)
+
+  3. For production, set up Firebase Auth to make
+     the login system actually work
+
+  4. Logo should be ~300x60px for best results
+
+  5. Check DESIGN_PREVIEW.html to see the design system
+
+
+📖 NEED MORE HELP?
+
+  • README.md          - Complete documentation
+  • UPDATE_SUMMARY.md  - What changed in v7.0
+  • DEPLOYMENT.md      - Detailed deployment guide
+  • DESIGN_PREVIEW.html - Visual design system guide
+  • CHANGES.txt        - Detailed change log
+
+
+════════════════════════════════════════════════════════════
+
+Ready? Just add your logo and test it out!
+
+Open index.html in your browser to get started.
+
+════════════════════════════════════════════════════════════

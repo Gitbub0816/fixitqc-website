@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang='en'>
+<head>
+  <!-- FixIt QC Marketing Site v7.0 • Built 2025-10-29 -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+  <title>Admin Console — FixIt QC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/site.css" />
+  <script type="module" src="assets/js/admin.mjs"></script>
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="index.html">
+      <img src="assets/img/fixitqc-logo.png" alt="FixIt QC" class="logo" />
+    </a>
+    <button id="hamburger" aria-label="Menu" aria-expanded="false">
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
+
+    <!-- Cascade overlay menu -->
+    <div id="cascade" class="cascade mini">
+      <a class="mini-card" href="index.html">
+        <span class="ico">
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        </span>
+        <span>Home</span>
+      </a>
+      <a class="mini-card" href="features.html">
+        <span class="ico">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+        </span>
+        <span>Features</span>
+      </a>
+      <a class="mini-card" href="screenshots.html">
+        <span class="ico">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+        </span>
+        <span>Screenshots</span>
+      </a>
+      <a class="mini-card" href="pricing.html">
+        <span class="ico">
+          <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+        </span>
+        <span>Pricing</span>
+      </a>
+      <a class="mini-card" href="admin.html">
+        <span class="ico">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M12 1v6m0 6v6m9-9h-6m-6 0H3m15.364 6.364l-4.243-4.243m-6.364 0L3.636 19.364M19.364 4.636l-4.243 4.243m-6.364 0L4.636 4.636"></path></svg>
+        </span>
+        <span>Admin</span>
+      </a>
+      <a class="mini-card" href="contact.html">
+        <span class="ico">
+          <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+        </span>
+        <span>Contact</span>
+      </a>
+      <button id="logoutBtn" class="mini-card logout-btn" style="background: rgba(236,66,66,0.2); border-color: rgba(236,66,66,0.4);">
+        <span class="ico">
+          <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        </span>
+        <span>Logout</span>
+      </button>
+    </div>
+  </header>
+
+  <section class="pagehead">
+    <h2>Admin Console</h2>
+    <p class="sub">Manage users, equipment, and system settings.</p>
+  </section>
+
+  <section class="panel glass">
+    <div id="authLoader" style="text-align: center; padding: 40px; color: var(--muted);">
+      <p style="margin-bottom: 16px;">⚡ Loading admin panel...</p>
+      <p style="font-size: 0.9rem;">If this takes more than a few seconds, you may need to <a href="login.html" style="color: var(--copper);">sign in</a>.</p>
+    </div>
+    
+    <div id="adminContent" style="display: none;">
+      <h3 style="margin-bottom: 8px;">Welcome, <span id="userEmail" style="color: var(--copper);">Admin</span></h3>
+      <p style="color: var(--muted); margin-bottom: 28px;">Manage your FixIt QC deployment from this console.</p>
+      
+      <!-- Quick Stats -->
+      <div class="admin-section">
+        <h4>Quick Stats</h4>
+        <div class="grid" style="margin-top: 12px;">
+          <div class="glass" style="padding: 20px; text-align: center;">
+            <div style="font-size: 2rem; font-weight: 800; color: var(--copper);">42</div>
+            <div style="color: var(--muted);">Active Stations</div>
+          </div>
+          <div class="glass" style="padding: 20px; text-align: center;">
+            <div style="font-size: 2rem; font-weight: 800; color: var(--copper);" id="totalUsers">10</div>
+            <div style="color: var(--muted);">Total Users</div>
+          </div>
+          <div class="glass" style="padding: 20px; text-align: center;">
+            <div style="font-size: 2rem; font-weight: 800; color: var(--copper);" id="totalEquipment">23</div>
+            <div style="color: var(--muted);">Equipment Items</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="admin-section" style="margin-top: 40px;">
+        <div class="tabs">
+          <button class="tab active" data-tab="users">Users</button>
+          <button class="tab" data-tab="equipment">Equipment</button>
+          <button class="tab" data-tab="settings">Settings</button>
+        </div>
+
+        <!-- Users Tab -->
+        <div id="users-content" class="tab-content active">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h4 style="margin: 0;">User Management</h4>
+            <button class="btn primary" onclick="showAddUserModal()">
+              <svg style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14m-7-7h14"></path>
+              </svg>
+              Add User
+            </button>
+          </div>
+          
+          <div class="glass" style="overflow-x: auto;">
+            <table class="admin-table" id="usersTable">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Station</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Users will be populated here by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Equipment Tab -->
+        <div id="equipment-content" class="tab-content">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h4 style="margin: 0;">Equipment Management</h4>
+            <button class="btn primary" onclick="showAddEquipmentModal()">
+              <svg style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14m-7-7h14"></path>
+              </svg>
+              Add Equipment
+            </button>
+          </div>
+          
+          <div class="glass" style="overflow-x: auto;">
+            <table class="admin-table" id="equipmentTable">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Type</th>
+                  <th>Location</th>
+                  <th>Status</th>
+                  <th>Last Service</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Equipment will be populated here by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings-content" class="tab-content">
+          <h4>System Settings</h4>
+          <div class="glass" style="padding: 24px; margin-top: 12px;">
+            <form id="settingsForm">
+              <label>
+                <span>Organization Name</span>
+                <input type="text" value="FixIt QC Demo" />
+              </label>
+              <label style="margin-top: 20px;">
+                <span>Notification Email</span>
+                <input type="email" value="admin@fixitqc.com" />
+              </label>
+              <label style="margin-top: 20px;">
+                <span>Default Station</span>
+                <select>
+                  <option>LAX - Los Angeles</option>
+                  <option>JFK - New York</option>
+                  <option>ORD - Chicago</option>
+                  <option>DFW - Dallas</option>
+                </select>
+              </label>
+              <div style="margin-top: 24px;">
+                <button type="button" class="btn primary">Save Settings</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Add User Modal -->
+  <div id="addUserModal" class="modal">
+    <div class="modal-content">
+      <h3>Add New User</h3>
+      <form id="addUserForm">
+        <label>
+          <span>Full Name</span>
+          <input type="text" id="newUserName" required />
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Email</span>
+          <input type="email" id="newUserEmail" required />
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Role</span>
+          <select id="newUserRole">
+            <option value="user">User</option>
+            <option value="tech">Technician</option>
+            <option value="admin">Admin</option>
+          </select>
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Station</span>
+          <select id="newUserStation">
+            <option>LAX - Los Angeles</option>
+            <option>JFK - New York</option>
+            <option>ORD - Chicago</option>
+            <option>DFW - Dallas</option>
+          </select>
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn ghost" onclick="closeModal('addUserModal')">Cancel</button>
+          <button type="submit" class="btn primary">Add User</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit User Modal -->
+  <div id="editUserModal" class="modal">
+    <div class="modal-content">
+      <h3>Edit User</h3>
+      <form id="editUserForm">
+        <input type="hidden" id="editUserId" />
+        <label>
+          <span>Full Name</span>
+          <input type="text" id="editUserName" required />
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Email</span>
+          <input type="email" id="editUserEmail" required />
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Role</span>
+          <select id="editUserRole">
+            <option value="user">User</option>
+            <option value="tech">Technician</option>
+            <option value="admin">Admin</option>
+          </select>
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Station</span>
+          <select id="editUserStation">
+            <option>LAX - Los Angeles</option>
+            <option>JFK - New York</option>
+            <option>ORD - Chicago</option>
+            <option>DFW - Dallas</option>
+          </select>
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn ghost" onclick="closeModal('editUserModal')">Cancel</button>
+          <button type="submit" class="btn primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Equipment Modal -->
+  <div id="addEquipmentModal" class="modal">
+    <div class="modal-content">
+      <h3>Add New Equipment</h3>
+      <form id="addEquipmentForm">
+        <label>
+          <span>Equipment ID</span>
+          <input type="text" id="newEquipmentId" required placeholder="e.g., FUEL-LAX-001" />
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Type</span>
+          <select id="newEquipmentType">
+            <option>Hydrant Cart</option>
+            <option>Fuel Truck</option>
+            <option>Dispenser</option>
+            <option>Filter Unit</option>
+            <option>Pump System</option>
+          </select>
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Location</span>
+          <select id="newEquipmentLocation">
+            <option>LAX - Los Angeles</option>
+            <option>JFK - New York</option>
+            <option>ORD - Chicago</option>
+            <option>DFW - Dallas</option>
+          </select>
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Status</span>
+          <select id="newEquipmentStatus">
+            <option value="active">Active</option>
+            <option value="maintenance">Maintenance</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn ghost" onclick="closeModal('addEquipmentModal')">Cancel</button>
+          <button type="submit" class="btn primary">Add Equipment</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Equipment Modal -->
+  <div id="editEquipmentModal" class="modal">
+    <div class="modal-content">
+      <h3>Edit Equipment</h3>
+      <form id="editEquipmentForm">
+        <input type="hidden" id="editEquipmentIndex" />
+        <label>
+          <span>Equipment ID</span>
+          <input type="text" id="editEquipmentId" required />
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Type</span>
+          <select id="editEquipmentType">
+            <option>Hydrant Cart</option>
+            <option>Fuel Truck</option>
+            <option>Dispenser</option>
+            <option>Filter Unit</option>
+            <option>Pump System</option>
+          </select>
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Location</span>
+          <select id="editEquipmentLocation">
+            <option>LAX - Los Angeles</option>
+            <option>JFK - New York</option>
+            <option>ORD - Chicago</option>
+            <option>DFW - Dallas</option>
+          </select>
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Status</span>
+          <select id="editEquipmentStatus">
+            <option value="active">Active</option>
+            <option value="maintenance">Maintenance</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn ghost" onclick="closeModal('editEquipmentModal')">Cancel</button>
+          <button type="submit" class="btn primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>© Caleb Owen 2025 • FixIt QC • Internal-friendly demo. Not affiliated with PrimeFlight Aviation Services.</p>
+  </footer>
+
+  <script defer src="assets/js/site.js"></script>
+  <script>
+    // Sample data
+    let users = [
+      { id: 1, name: 'John Martinez', email: 'john.martinez@fixitqc.com', role: 'admin', station: 'LAX - Los Angeles', active: true },
+      { id: 2, name: 'Sarah Chen', email: 'sarah.chen@fixitqc.com', role: 'admin', station: 'JFK - New York', active: true },
+      { id: 3, name: 'Mike Johnson', email: 'mike.johnson@fixitqc.com', role: 'admin', station: 'ORD - Chicago', active: true },
+      { id: 4, name: 'David Rodriguez', email: 'david.rodriguez@fixitqc.com', role: 'tech', station: 'LAX - Los Angeles', active: true },
+      { id: 5, name: 'Emily Williams', email: 'emily.williams@fixitqc.com', role: 'tech', station: 'JFK - New York', active: true },
+      { id: 6, name: 'James Anderson', email: 'james.anderson@fixitqc.com', role: 'tech', station: 'ORD - Chicago', active: true },
+      { id: 7, name: 'Lisa Thompson', email: 'lisa.thompson@fixitqc.com', role: 'tech', station: 'DFW - Dallas', active: true },
+      { id: 8, name: 'Robert Garcia', email: 'robert.garcia@fixitqc.com', role: 'tech', station: 'LAX - Los Angeles', active: true },
+      { id: 9, name: 'Jennifer Lee', email: 'jennifer.lee@fixitqc.com', role: 'tech', station: 'JFK - New York', active: true },
+      { id: 10, name: 'Michael Brown', email: 'michael.brown@fixitqc.com', role: 'user', station: 'LAX - Los Angeles', active: true }
+    ];
+
+    let equipment = [
+      { id: 'FUEL-LAX-001', type: 'Hydrant Cart', location: 'LAX - Los Angeles', status: 'active', lastService: '2025-10-15' },
+      { id: 'FUEL-LAX-002', type: 'Fuel Truck', location: 'LAX - Los Angeles', status: 'active', lastService: '2025-10-20' },
+      { id: 'FUEL-JFK-001', type: 'Hydrant Cart', location: 'JFK - New York', status: 'maintenance', lastService: '2025-10-25' },
+      { id: 'FUEL-JFK-002', type: 'Dispenser', location: 'JFK - New York', status: 'active', lastService: '2025-10-18' },
+      { id: 'FUEL-ORD-001', type: 'Fuel Truck', location: 'ORD - Chicago', status: 'active', lastService: '2025-10-22' },
+      { id: 'FUEL-ORD-002', type: 'Filter Unit', location: 'ORD - Chicago', status: 'inactive', lastService: '2025-09-30' },
+      { id: 'FUEL-DFW-001', type: 'Hydrant Cart', location: 'DFW - Dallas', status: 'active', lastService: '2025-10-27' },
+      { id: 'FUEL-DFW-002', type: 'Pump System', location: 'DFW - Dallas', status: 'active', lastService: '2025-10-24' }
+    ];
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      renderUsers();
+      renderEquipment();
+      updateStats();
+      
+      // Tab switching
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+          const tabName = this.dataset.tab;
+          
+          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          
+          this.classList.add('active');
+          document.getElementById(tabName + '-content').classList.add('active');
+        });
+      });
+
+      // Form submissions
+      document.getElementById('addUserForm').addEventListener('submit', handleAddUser);
+      document.getElementById('editUserForm').addEventListener('submit', handleEditUser);
+      document.getElementById('addEquipmentForm').addEventListener('submit', handleAddEquipment);
+      document.getElementById('editEquipmentForm').addEventListener('submit', handleEditEquipment);
+    });
+
+    function renderUsers() {
+      const tbody = document.querySelector('#usersTable tbody');
+      tbody.innerHTML = users.map(user => `
+        <tr>
+          <td>${user.name}</td>
+          <td>${user.email}</td>
+          <td><span class="role-badge ${user.role}">${user.role.toUpperCase()}</span></td>
+          <td>${user.station}</td>
+          <td>
+            <span class="status-indicator ${user.active ? 'active' : 'inactive'}"></span>
+            ${user.active ? 'Active' : 'Inactive'}
+          </td>
+          <td>
+            <div class="action-btns">
+              <button class="action-btn edit" onclick="editUser(${user.id})">Edit</button>
+              ${user.role !== 'admin' ? `<button class="action-btn promote" onclick="promoteUser(${user.id})">Promote</button>` : ''}
+              <button class="action-btn delete" onclick="deleteUser(${user.id})">Delete</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderEquipment() {
+      const tbody = document.querySelector('#equipmentTable tbody');
+      tbody.innerHTML = equipment.map((item, index) => `
+        <tr>
+          <td>${item.id}</td>
+          <td>${item.type}</td>
+          <td>${item.location}</td>
+          <td>
+            <span class="status-indicator ${item.status}"></span>
+            ${item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+          </td>
+          <td>${item.lastService}</td>
+          <td>
+            <div class="action-btns">
+              <button class="action-btn edit" onclick="editEquipment(${index})">Edit</button>
+              <button class="action-btn delete" onclick="deleteEquipment(${index})">Delete</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function updateStats() {
+      document.getElementById('totalUsers').textContent = users.length;
+      document.getElementById('totalEquipment').textContent = equipment.length;
+    }
+
+    function showAddUserModal() {
+      document.getElementById('addUserModal').classList.add('active');
+    }
+
+    function showAddEquipmentModal() {
+      document.getElementById('addEquipmentModal').classList.add('active');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    function editUser(userId) {
+      const user = users.find(u => u.id === userId);
+      if (!user) return;
+      
+      document.getElementById('editUserId').value = user.id;
+      document.getElementById('editUserName').value = user.name;
+      document.getElementById('editUserEmail').value = user.email;
+      document.getElementById('editUserRole').value = user.role;
+      document.getElementById('editUserStation').value = user.station;
+      
+      document.getElementById('editUserModal').classList.add('active');
+    }
+
+    function promoteUser(userId) {
+      const user = users.find(u => u.id === userId);
+      if (!user) return;
+      
+      if (user.role === 'user') user.role = 'tech';
+      else if (user.role === 'tech') user.role = 'admin';
+      
+      renderUsers();
+    }
+
+    function deleteUser(userId) {
+      if (confirm('Are you sure you want to delete this user?')) {
+        users = users.filter(u => u.id !== userId);
+        renderUsers();
+        updateStats();
+      }
+    }
+
+    function editEquipment(index) {
+      const item = equipment[index];
+      
+      document.getElementById('editEquipmentIndex').value = index;
+      document.getElementById('editEquipmentId').value = item.id;
+      document.getElementById('editEquipmentType').value = item.type;
+      document.getElementById('editEquipmentLocation').value = item.location;
+      document.getElementById('editEquipmentStatus').value = item.status;
+      
+      document.getElementById('editEquipmentModal').classList.add('active');
+    }
+
+    function deleteEquipment(index) {
+      if (confirm('Are you sure you want to delete this equipment?')) {
+        equipment.splice(index, 1);
+        renderEquipment();
+        updateStats();
+      }
+    }
+
+    function handleAddUser(e) {
+      e.preventDefault();
+      
+      const newUser = {
+        id: Math.max(...users.map(u => u.id)) + 1,
+        name: document.getElementById('newUserName').value,
+        email: document.getElementById('newUserEmail').value,
+        role: document.getElementById('newUserRole').value,
+        station: document.getElementById('newUserStation').value,
+        active: true
+      };
+      
+      users.push(newUser);
+      renderUsers();
+      updateStats();
+      closeModal('addUserModal');
+      e.target.reset();
+    }
+
+    function handleEditUser(e) {
+      e.preventDefault();
+      
+      const userId = parseInt(document.getElementById('editUserId').value);
+      const user = users.find(u => u.id === userId);
+      
+      if (user) {
+        user.name = document.getElementById('editUserName').value;
+        user.email = document.getElementById('editUserEmail').value;
+        user.role = document.getElementById('editUserRole').value;
+        user.station = document.getElementById('editUserStation').value;
+        
+        renderUsers();
+        closeModal('editUserModal');
+      }
+    }
+
+    function handleAddEquipment(e) {
+      e.preventDefault();
+      
+      const newEquipment = {
+        id: document.getElementById('newEquipmentId').value,
+        type: document.getElementById('newEquipmentType').value,
+        location: document.getElementById('newEquipmentLocation').value,
+        status: document.getElementById('newEquipmentStatus').value,
+        lastService: new Date().toISOString().split('T')[0]
+      };
+      
+      equipment.push(newEquipment);
+      renderEquipment();
+      updateStats();
+      closeModal('addEquipmentModal');
+      e.target.reset();
+    }
+
+    function handleEditEquipment(e) {
+      e.preventDefault();
+      
+      const index = parseInt(document.getElementById('editEquipmentIndex').value);
+      
+      equipment[index] = {
+        id: document.getElementById('editEquipmentId').value,
+        type: document.getElementById('editEquipmentType').value,
+        location: document.getElementById('editEquipmentLocation').value,
+        status: document.getElementById('editEquipmentStatus').value,
+        lastService: equipment[index].lastService
+      };
+      
+      renderEquipment();
+      closeModal('editEquipmentModal');
+    }
+
+    // Close modals on outside click
+    document.querySelectorAll('.modal').forEach(modal => {
+      modal.addEventListener('click', function(e) {
+        if (e.target === this) {
+          this.classList.remove('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

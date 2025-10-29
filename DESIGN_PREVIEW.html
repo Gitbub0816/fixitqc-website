@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FixIt QC v7.0 - Design Preview</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #101318;
+      color: #EDEFF4;
+      padding: 40px;
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #EC9C42, #ffa952);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    h2 {
+      color: #EC9C42;
+      margin: 40px 0 20px;
+      font-size: 1.5rem;
+    }
+    
+    h3 {
+      color: #8B5CF6;
+      margin: 24px 0 12px;
+      font-size: 1.2rem;
+    }
+    
+    p {
+      color: #9aa3b2;
+      margin-bottom: 16px;
+    }
+    
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      margin: 24px 0;
+    }
+    
+    .card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(236, 156, 66, 0.15);
+      border-radius: 16px;
+      padding: 24px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+      transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+      box-shadow: 0 0 25px rgba(236, 156, 66, 0.5);
+      border-color: #EC9C42;
+      transform: translateY(-2px);
+    }
+    
+    .card h3 {
+      margin-top: 0;
+    }
+    
+    .icon-demo {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin: 24px 0;
+    }
+    
+    .icon-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+      transition: all 0.3s ease;
+      min-width: 150px;
+    }
+    
+    .icon-item:hover {
+      background: rgba(236, 156, 66, 0.1);
+      border-color: #EC9C42;
+      box-shadow: 0 0 25px rgba(236, 156, 66, 0.5);
+      transform: translateY(-2px);
+    }
+    
+    .icon-item svg {
+      width: 20px;
+      height: 20px;
+      stroke: #EC9C42;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    
+    .status-demo {
+      display: flex;
+      gap: 16px;
+      margin: 24px 0;
+      flex-wrap: wrap;
+    }
+    
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 8px;
+    }
+    
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    
+    .status-dot.active {
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+    }
+    
+    .status-dot.inactive {
+      background: #ef4444;
+      box-shadow: 0 0 8px #ef4444;
+    }
+    
+    .status-dot.maintenance {
+      background: #f59e0b;
+      box-shadow: 0 0 8px #f59e0b;
+    }
+    
+    .role-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-right: 8px;
+    }
+    
+    .role-badge.admin {
+      background: rgba(236, 156, 66, 0.2);
+      color: #EC9C42;
+      border: 1px solid #EC9C42;
+    }
+    
+    .role-badge.tech {
+      background: rgba(139, 92, 246, 0.2);
+      color: #8B5CF6;
+      border: 1px solid #8B5CF6;
+    }
+    
+    .role-badge.user {
+      background: rgba(154, 163, 178, 0.2);
+      color: #9aa3b2;
+      border: 1px solid #9aa3b2;
+    }
+    
+    .color-palette {
+      display: flex;
+      gap: 16px;
+      margin: 24px 0;
+      flex-wrap: wrap;
+    }
+    
+    .color-swatch {
+      width: 120px;
+      height: 120px;
+      border-radius: 12px;
+      display: flex;
+      align-items: flex-end;
+      padding: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    ul {
+      color: #9aa3b2;
+      margin-left: 24px;
+      margin-bottom: 16px;
+    }
+    
+    li {
+      margin-bottom: 8px;
+    }
+    
+    code {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2px 8px;
+      border-radius: 4px;
+      color: #EC9C42;
+      font-family: 'Courier New', monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>FixIt QC v7.0 Design System</h1>
+    <p style="font-size: 1.1rem; color: #EDEFF4;">Modern glassmorphism with icon-based navigation and comprehensive admin features</p>
+    
+    <h2>🎨 Color Palette</h2>
+    <div class="color-palette">
+      <div class="color-swatch" style="background: #101318;">
+        <span>Background<br>#101318</span>
+      </div>
+      <div class="color-swatch" style="background: #EC9C42;">
+        <span style="color: #000;">Copper<br>#EC9C42</span>
+      </div>
+      <div class="color-swatch" style="background: #8B5CF6;">
+        <span>Violet<br>#8B5CF6</span>
+      </div>
+      <div class="color-swatch" style="background: #EDEFF4;">
+        <span style="color: #000;">Text<br>#EDEFF4</span>
+      </div>
+      <div class="color-swatch" style="background: #9aa3b2;">
+        <span>Muted<br>#9aa3b2</span>
+      </div>
+    </div>
+    
+    <h2>🔲 Glass Cards</h2>
+    <p>Hover over cards to see the glow transition from violet to orange</p>
+    <div class="feature-grid">
+      <div class="card">
+        <h3>User Management</h3>
+        <p>Add, edit, delete, and promote users with role-based access control.</p>
+      </div>
+      <div class="card">
+        <h3>Equipment Tracking</h3>
+        <p>Monitor equipment status, location, and service history in real-time.</p>
+      </div>
+      <div class="card">
+        <h3>Dashboard Stats</h3>
+        <p>Live statistics showing active stations, users, and equipment counts.</p>
+      </div>
+    </div>
+    
+    <h2>🎯 Icon Navigation</h2>
+    <p>Professional SVG icons replace emojis for a cleaner, more polished look</p>
+    <div class="icon-demo">
+      <div class="icon-item">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <span>Home</span>
+      </div>
+      <div class="icon-item">
+        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+        <span>Features</span>
+      </div>
+      <div class="icon-item">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+        <span>Screenshots</span>
+      </div>
+      <div class="icon-item">
+        <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+        <span>Pricing</span>
+      </div>
+      <div class="icon-item">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M12 1v6m0 6v6m9-9h-6m-6 0H3m15.364 6.364l-4.243-4.243m-6.364 0L3.636 19.364M19.364 4.636l-4.243 4.243m-6.364 0L4.636 4.636"></path></svg>
+        <span>Admin</span>
+      </div>
+      <div class="icon-item">
+        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+        <span>Contact</span>
+      </div>
+    </div>
+    
+    <h2>👥 Role Badges</h2>
+    <p>Visual role identification for users in the admin panel</p>
+    <div style="margin: 24px 0;">
+      <span class="role-badge admin">ADMIN</span>
+      <span class="role-badge tech">TECHNICIAN</span>
+      <span class="role-badge user">USER</span>
+    </div>
+    
+    <h2>📊 Status Indicators</h2>
+    <p>Color-coded status dots for equipment and users</p>
+    <div class="status-demo">
+      <div class="status">
+        <span class="status-dot active"></span>
+        <span>Active</span>
+      </div>
+      <div class="status">
+        <span class="status-dot maintenance"></span>
+        <span>Maintenance</span>
+      </div>
+      <div class="status">
+        <span class="status-dot inactive"></span>
+        <span>Inactive</span>
+      </div>
+    </div>
+    
+    <h2>✨ Key Features</h2>
+    <div class="feature-grid">
+      <div class="card">
+        <h3>10 Pre-loaded Users</h3>
+        <ul>
+          <li>3 Administrators</li>
+          <li>6 Technicians</li>
+          <li>1 Regular User</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>8 Equipment Items</h3>
+        <ul>
+          <li>Multiple equipment types</li>
+          <li>4 Station locations</li>
+          <li>Real status tracking</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Full CRUD Operations</h3>
+        <ul>
+          <li>Create new records</li>
+          <li>Read/view all data</li>
+          <li>Update existing info</li>
+          <li>Delete with confirmation</li>
+        </ul>
+      </div>
+    </div>
+    
+    <h2>🚀 Admin Panel Tabs</h2>
+    <p>Three main sections for comprehensive management:</p>
+    <div class="card" style="margin: 24px 0;">
+      <h3>Users Tab</h3>
+      <p>Full user management with add, edit, delete, and promote functions. View all users in a sortable table with role badges and status indicators.</p>
+      
+      <h3 style="margin-top: 24px;">Equipment Tab</h3>
+      <p>Complete equipment tracking with CRUD operations. Monitor status, location, and service history for all equipment.</p>
+      
+      <h3 style="margin-top: 24px;">Settings Tab</h3>
+      <p>System configuration including organization name, notification settings, and default station selection.</p>
+    </div>
+    
+    <h2>💡 Implementation Notes</h2>
+    <div class="card">
+      <ul>
+        <li>All navigation menus now use SVG icons instead of emojis</li>
+        <li>Glass cards have violet glow by default, orange on hover/active</li>
+        <li>Your FixIt QC logo should be placed at <code>assets/img/fixitqc-logo.png</code></li>
+        <li>Admin panel works in demo mode without Firebase configuration</li>
+        <li>Fully responsive design works on all device sizes</li>
+        <li>Data persists in browser memory during the session</li>
+      </ul>
+    </div>
+    
+    <h2>📝 Next Steps</h2>
+    <div class="card">
+      <ol style="color: #9aa3b2; margin-left: 24px;">
+        <li style="margin-bottom: 12px;">Add your logo to <code>assets/img/fixitqc-logo.png</code></li>
+        <li style="margin-bottom: 12px;">Optionally add screenshot images (screen1-6.png)</li>
+        <li style="margin-bottom: 12px;">Test the admin panel and all features</li>
+        <li style="margin-bottom: 12px;">Deploy to Firebase when ready: <code>firebase deploy --only hosting</code></li>
+      </ol>
+    </div>
+    
+    <div style="margin-top: 60px; padding: 24px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1);">
+      <p style="color: #EC9C42; font-weight: 600; font-size: 1.1rem;">FixIt QC v7.0 is ready to deploy! 🚀</p>
+      <p style="margin-top: 8px;">All files are in the outputs directory</p>
+    </div>
+  </div>
+</body>
+</html>

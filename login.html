@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang='en'>
+<head>
+  <!-- FixIt QC Marketing Site v7.0 • Built 2025-10-29 -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+  <title>Admin Login — FixIt QC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/site.css" />
+  <script type="module" src="assets/js/login.mjs"></script>
+</head>
+<body>
+  <header class="nav">
+    <a class="brand" href="index.html">
+      <img src="assets/img/fixitqc-logo.png" alt="FixIt QC" class="logo" />
+    </a>
+  </header>
+
+  <section class="login">
+    <div class="login-card glass">
+      <h2 style="margin-top: 0;">Admin Login</h2>
+      <form id="loginForm" class="form">
+        <label>
+          <span>Email</span>
+          <input type="email" id="email" required placeholder="admin@example.com" autocomplete="email" />
+        </label>
+        <label>
+          <span>Password</span>
+          <input type="password" id="password" required placeholder="••••••••" autocomplete="current-password" />
+        </label>
+        <div style="display: flex; align-items: center; gap: 12px; margin-top: 12px;">
+          <button type="submit" class="btn primary">Sign In</button>
+          <span id="loginStatus" class="status"></span>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>© Caleb Owen 2025 • FixIt QC • Internal-friendly demo. Not affiliated with PrimeFlight Aviation Services.</p>
+  </footer>
+</body>
+</html>
