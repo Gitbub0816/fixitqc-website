@@ -16,6 +16,29 @@ let allUsers = [];
 let allOrganizations = [];
 let allStations = [];
 let allEquipment = [];
+let authCheckComplete = false;
+
+// IMMEDIATE AUTH CHECK - Prevent any unauthorized access
+// Wait for Firebase to initialize
+let authCheckInterval = setInterval(() => {
+  const user = authService.getCurrentUser();
+  if (user !== undefined) {
+    clearInterval(authCheckInterval);
+    if (!user) {
+      console.log('No authenticated user - redirecting to login');
+      window.location.replace('login.html');
+    }
+  }
+}, 100);
+
+// Timeout after 3 seconds if Firebase doesn't load
+setTimeout(() => {
+  clearInterval(authCheckInterval);
+  if (!authCheckComplete) {
+    console.log('Auth check timeout - redirecting to login');
+    window.location.replace('login.html');
+  }
+}, 3000);
 
 // Initialize admin panel
 document.addEventListener('DOMContentLoaded', async function() {
@@ -23,13 +46,15 @@ document.addEventListener('DOMContentLoaded', async function() {
   
   // Check authentication
   authService.onAuthStateChanged(async (user) => {
+    authCheckComplete = true;
     if (user) {
       currentUser = user;
       await loadUserData(user.uid);
       await initializeAdminPanel();
     } else {
       // Redirect to login if not authenticated
-      window.location.href = 'login.html';
+      console.log('Auth state changed to null - redirecting to login');
+      window.location.replace('login.html');
     }
   });
 
@@ -561,6 +586,7 @@ async function handleAddOrganization(e) {
     return;
   }
   
+  console.log('📝 Creating organization:', { name, contactEmail, phone });
   showLoading();
   
   const orgData = {
@@ -569,17 +595,23 @@ async function handleAddOrganization(e) {
     phone: phone || null
   };
   
+  console.log('🔥 Calling Firestore createOrganization...');
   const result = await organizationService.createOrganization(orgData);
   
+  console.log('📊 Firestore Result:', result);
+  
   if (result.success) {
+    console.log('✅ SUCCESS! Organization created with ID:', result.id);
     allOrganizations.push({ id: result.id, ...orgData, active: true });
     renderOrganizations();
     updateStats();
     window.closeModal('addOrganizationModal');
     e.target.reset();
-    showNotification('Organization created successfully', 'success');
+    showNotification('Organization created successfully!', 'success');
   } else {
+    console.error('❌ FAILED! Error:', result.error);
     showNotification('Failed to create organization: ' + result.error, 'error');
+    alert('Error creating organization. Check browser console (F12) for details.');
   }
   
   hideLoading();
