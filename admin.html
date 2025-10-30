@@ -1,624 +1,549 @@
 <!doctype html>
-<html lang='en'>
+<html lang="en">
 <head>
-  <!-- FixIt QC Marketing Site v7.0 • Built 2025-10-29 -->
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
-  <title>Admin Console — FixIt QC</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/site.css" />
-  <script type="module" src="assets/js/admin.mjs"></script>
+  <title>FixIt Admin Console</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <!-- Aesthetic tuned to your dark gray + copper + dark violet palette -->
+  <style>
+    :root{
+      --baseLo:#1A1C22;        /* charcoal */
+      --baseHi:#262A32;        /* slightly lighter panel */
+      --violetTop:#361C56;     /* dark violet highlight */
+      --copper:#EC9C42;        /* copper accent */
+      --ink:#E8EAF0;
+      --muted:#B6BBC6;
+      --ring:rgba(236,156,66,0.35);
+      --card: rgba(38,42,50,0.72); /* glass */
+    }
+    html,body{margin:0;padding:0;background:var(--baseLo);color:var(--ink);font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial;}
+    a{color:var(--copper);text-decoration:none}
+    .wrap{max-width:1100px;margin:0 auto;padding:20px}
+    header{
+      position:sticky;top:0;z-index:50;
+      backdrop-filter:saturate(120%) blur(8px);
+      background:linear-gradient(180deg, rgba(26,28,34,.85), rgba(26,28,34,.55));
+      border-bottom:1px solid rgba(255,255,255,0.08);
+    }
+    .brand{display:flex;align-items:center;gap:10px;padding:14px 20px}
+    .dot{width:14px;height:14px;border-radius:10px;background:var(--copper);box-shadow:0 0 18px var(--ring);}
+    .kicker{font-size:11px;color:var(--muted);margin-top:-4px}
+    nav.tabs{display:flex;gap:8px;padding:0 20px 14px 20px;flex-wrap:wrap}
+    .tab{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);padding:8px 12px;border-radius:12px;font-weight:600;letter-spacing:.2px;cursor:pointer}
+    .tab.active{background:rgba(255,255,255,.15)}
+    .pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);padding:6px 10px;border-radius:999px;font-size:12px}
+    .btn{background:var(--copper);color:#111;border:0;padding:8px 12px;border-radius:12px;font-weight:700;cursor:pointer;box-shadow:0 0 18px var(--ring);transition:transform .05s ease}
+    .btn:active{transform:translateY(1px)}
+    .btn.alt{background:transparent;color:var(--ink);border:1px solid rgba(255,255,255,.18)}
+    .grid{display:grid;gap:12px}
+    .g-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .g-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .g-5{grid-template-columns:repeat(5,minmax(0,1fr))}
+    @media (max-width:900px){.g-3,.g-4,.g-5{grid-template-columns:1fr}}
+    .card{
+      background:var(--card);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:18px;
+      padding:16px;
+      box-shadow:0 0 24px var(--ring), inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+    .card h3{margin:0 0 8px 0}
+    .hint{font-size:12px;color:var(--muted)}
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .grow{flex:1}
+    .input, .select{
+      width:100%;padding:10px 12px;border-radius:12px;outline:none;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.25); color:var(--ink)
+    }
+    .input:focus,.select:focus{border-color:var(--copper); box-shadow:0 0 0 3px rgba(236,156,66,.15)}
+    table{width:100%;border-collapse:collapse;font-size:14px}
+    th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,.08);vertical-align:top}
+    th{color:#D6DBE6;text-align:left}
+    tbody tr:hover{background:rgba(255,255,255,.04)}
+    .status{display:inline-flex;gap:8px}
+    .dot-s{width:10px;height:10px;border-radius:50%}
+    .green{background:#22c55e}.yellow{background:#fbbf24}.red{background:#ef4444}
+    .danger{background:#ef4444;color:white}
+    .warn{color:#f59e0b}
+    .center{display:flex;align-items:center;justify-content:center;min-height:40vh;text-align:center}
+    .blocked{max-width:560px}
+    .tag{display:inline-flex;padding:4px 8px;border-radius:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);font-size:12px}
+    .spacer{height:8px}
+    .fade-in{animation:fade .25s ease}
+    @keyframes fade{from{opacity:.2;transform:translateY(2px)}to{opacity:1;transform:none}}
+  </style>
 </head>
 <body>
-  <header class="nav">
-    <a class="brand" href="index.html">
-      <img src="assets/img/fixitqc-logo.png" alt="FixIt QC" class="logo" />
-    </a>
-    <button id="hamburger" aria-label="Menu" aria-expanded="false">
-      <span class="bar"></span>
-      <span class="bar"></span>
-    </button>
-
-    <!-- Cascade overlay menu -->
-    <div id="cascade" class="cascade mini">
-      <a class="mini-card" href="index.html">
-        <span class="ico">
-          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-        </span>
-        <span>Home</span>
-      </a>
-      <a class="mini-card" href="features.html">
-        <span class="ico">
-          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-        </span>
-        <span>Features</span>
-      </a>
-      <a class="mini-card" href="screenshots.html">
-        <span class="ico">
-          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-        </span>
-        <span>Screenshots</span>
-      </a>
-      <a class="mini-card" href="pricing.html">
-        <span class="ico">
-          <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
-        </span>
-        <span>Pricing</span>
-      </a>
-      <a class="mini-card" href="admin.html">
-        <span class="ico">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M12 1v6m0 6v6m9-9h-6m-6 0H3m15.364 6.364l-4.243-4.243m-6.364 0L3.636 19.364M19.364 4.636l-4.243 4.243m-6.364 0L4.636 4.636"></path></svg>
-        </span>
-        <span>Admin</span>
-      </a>
-      <a class="mini-card" href="contact.html">
-        <span class="ico">
-          <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-        </span>
-        <span>Contact</span>
-      </a>
-      <button id="logoutBtn" class="mini-card logout-btn" style="background: rgba(236,66,66,0.2); border-color: rgba(236,66,66,0.4);">
-        <span class="ico">
-          <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-        </span>
-        <span>Logout</span>
-      </button>
+  <header>
+    <div class="brand">
+      <div class="dot"></div>
+      <div>
+        <div style="font-weight:800;letter-spacing:.3px">FixIt Admin Console</div>
+        <div class="kicker">Role-based management · glass cards · copper accents</div>
+      </div>
+      <div style="margin-left:auto" id="userBadge" class="pill">checking auth…</div>
     </div>
+    <nav class="tabs">
+      <button class="tab active" data-tab="orgs">Organizations</button>
+      <button class="tab" data-tab="stations">Stations</button>
+      <button class="tab" data-tab="equipment">Equipment</button>
+      <button class="tab" data-tab="users">Users</button>
+    </nav>
   </header>
 
-  <section class="pagehead">
-    <h2>Admin Console</h2>
-    <p class="sub">Manage users, equipment, and system settings.</p>
-  </section>
-
-  <section class="panel glass">
-    <div id="authLoader" style="text-align: center; padding: 40px; color: var(--muted);">
-      <p style="margin-bottom: 16px;">⚡ Loading admin panel...</p>
-      <p style="font-size: 0.9rem;">If this takes more than a few seconds, you may need to <a href="login.html" style="color: var(--copper);">sign in</a>.</p>
-    </div>
-    
-    <div id="adminContent" style="display: none;">
-      <h3 style="margin-bottom: 8px;">Welcome, <span id="userEmail" style="color: var(--copper);">Admin</span></h3>
-      <p style="color: var(--muted); margin-bottom: 28px;">Manage your FixIt QC deployment from this console.</p>
-      
-      <!-- Quick Stats -->
-      <div class="admin-section">
-        <h4>Quick Stats</h4>
-        <div class="grid" style="margin-top: 12px;">
-          <div class="glass" style="padding: 20px; text-align: center;">
-            <div style="font-size: 2rem; font-weight: 800; color: var(--copper);">42</div>
-            <div style="color: var(--muted);">Active Stations</div>
-          </div>
-          <div class="glass" style="padding: 20px; text-align: center;">
-            <div style="font-size: 2rem; font-weight: 800; color: var(--copper);" id="totalUsers">10</div>
-            <div style="color: var(--muted);">Total Users</div>
-          </div>
-          <div class="glass" style="padding: 20px; text-align: center;">
-            <div style="font-size: 2rem; font-weight: 800; color: var(--copper);" id="totalEquipment">23</div>
-            <div style="color: var(--muted);">Equipment Items</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tabs -->
-      <div class="admin-section" style="margin-top: 40px;">
-        <div class="tabs">
-          <button class="tab active" data-tab="users">Users</button>
-          <button class="tab" data-tab="equipment">Equipment</button>
-          <button class="tab" data-tab="settings">Settings</button>
-        </div>
-
-        <!-- Users Tab -->
-        <div id="users-content" class="tab-content active">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <h4 style="margin: 0;">User Management</h4>
-            <button class="btn primary" onclick="showAddUserModal()">
-              <svg style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 5v14m-7-7h14"></path>
-              </svg>
-              Add User
-            </button>
-          </div>
-          
-          <div class="glass" style="overflow-x: auto;">
-            <table class="admin-table" id="usersTable">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Station</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- Users will be populated here by JavaScript -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Equipment Tab -->
-        <div id="equipment-content" class="tab-content">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <h4 style="margin: 0;">Equipment Management</h4>
-            <button class="btn primary" onclick="showAddEquipmentModal()">
-              <svg style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 5v14m-7-7h14"></path>
-              </svg>
-              Add Equipment
-            </button>
-          </div>
-          
-          <div class="glass" style="overflow-x: auto;">
-            <table class="admin-table" id="equipmentTable">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Type</th>
-                  <th>Location</th>
-                  <th>Status</th>
-                  <th>Last Service</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- Equipment will be populated here by JavaScript -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Settings Tab -->
-        <div id="settings-content" class="tab-content">
-          <h4>System Settings</h4>
-          <div class="glass" style="padding: 24px; margin-top: 12px;">
-            <form id="settingsForm">
-              <label>
-                <span>Organization Name</span>
-                <input type="text" value="FixIt QC Demo" />
-              </label>
-              <label style="margin-top: 20px;">
-                <span>Notification Email</span>
-                <input type="email" value="admin@fixitqc.com" />
-              </label>
-              <label style="margin-top: 20px;">
-                <span>Default Station</span>
-                <select>
-                  <option>LAX - Los Angeles</option>
-                  <option>JFK - New York</option>
-                  <option>ORD - Chicago</option>
-                  <option>DFW - Dallas</option>
-                </select>
-              </label>
-              <div style="margin-top: 24px;">
-                <button type="button" class="btn primary">Save Settings</button>
-              </div>
-            </form>
-          </div>
+  <div class="wrap">
+    <!-- Access gate -->
+    <div id="gate" class="center" style="display:none">
+      <div class="blocked card">
+        <h2 style="margin:0 0 6px 0">Access restricted</h2>
+        <div class="hint">You are signed in, but your account does not have admin privileges. Ask a global/org/regional/station admin to grant access.</div>
+        <div class="spacer"></div>
+        <div class="row">
+          <button class="btn alt" id="signOutBtn">Sign out</button>
+          <span class="hint">Required claim: <span class="tag">admin = true</span> or <span class="tag">role ∈ {station_admin, regional_admin, org_admin, global_admin}</span></span>
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- Add User Modal -->
-  <div id="addUserModal" class="modal">
-    <div class="modal-content">
-      <h3>Add New User</h3>
-      <form id="addUserForm">
-        <label>
-          <span>Full Name</span>
-          <input type="text" id="newUserName" required />
-        </label>
-        <label style="margin-top: 16px;">
-          <span>Email</span>
-          <input type="email" id="newUserEmail" required />
-        </label>
-        <label style="margin-top: 16px;">
-          <span>Role</span>
-          <select id="newUserRole">
-            <option value="user">User</option>
-            <option value="tech">Technician</option>
-            <option value="admin">Admin</option>
-          </select>
-        </label>
-        <label style="margin-top: 16px;">
-          <span>Station</span>
-          <select id="newUserStation">
-            <option>LAX - Los Angeles</option>
-            <option>JFK - New York</option>
-            <option>ORD - Chicago</option>
-            <option>DFW - Dallas</option>
-          </select>
-        </label>
-        <div class="modal-actions">
-          <button type="button" class="btn ghost" onclick="closeModal('addUserModal')">Cancel</button>
-          <button type="submit" class="btn primary">Add User</button>
+    <!-- Tabs -->
+    <section id="tab-orgs" class="fade-in">
+      <div class="card">
+        <h3>Organizations</h3>
+        <div class="grid g-3">
+          <input id="org-name" class="input" placeholder="Name">
+          <input id="org-code" class="input" placeholder="Code">
+          <button id="org-add" class="btn">Add Organization</button>
         </div>
-      </form>
-    </div>
+      </div>
+      <div class="spacer"></div>
+      <div class="card">
+        <div class="row"><h3 class="grow">All Organizations</h3><button id="org-refresh" class="btn alt">Refresh</button></div>
+        <div class="spacer"></div>
+        <div class="hint">Editing is inline; click <b>Save</b> per row.</div>
+        <div class="spacer"></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Name</th><th>Code</th><th>Actions</th></tr></thead>
+            <tbody id="org-rows"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-stations" class="fade-in" style="display:none">
+      <div class="card">
+        <h3>Stations</h3>
+        <div class="grid g-4">
+          <input id="st-orgId" class="input" placeholder="orgId">
+          <input id="st-name" class="input" placeholder="Name">
+          <input id="st-code" class="input" placeholder="Code (e.g., BNA)">
+          <button id="st-add" class="btn">Add Station</button>
+        </div>
+      </div>
+      <div class="spacer"></div>
+      <div class="card">
+        <div class="row"><h3 class="grow">All Stations</h3><button id="st-refresh" class="btn alt">Refresh</button></div>
+        <div class="spacer"></div>
+        <table>
+          <thead><tr><th>Org</th><th>Name</th><th>Code</th><th>Actions</th></tr></thead>
+          <tbody id="st-rows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="tab-equipment" class="fade-in" style="display:none">
+      <div class="card">
+        <h3>Equipment</h3>
+        <div class="grid g-5">
+          <input id="eq-stationId" class="input" placeholder="stationId">
+          <input id="eq-id" class="input" placeholder="equipmentId">
+          <input id="eq-type" class="input" placeholder="type (e.g., TCS, Hydrant cart)">
+          <select id="eq-status" class="select">
+            <option value="green">green</option>
+            <option value="yellow">yellow</option>
+            <option value="red">red</option>
+          </select>
+          <button id="eq-add" class="btn">Add Equipment</button>
+        </div>
+      </div>
+      <div class="spacer"></div>
+      <div class="card">
+        <div class="row"><h3 class="grow">All Equipment</h3><button id="eq-refresh" class="btn alt">Refresh</button></div>
+        <div class="spacer"></div>
+        <table>
+          <thead><tr><th>Station</th><th>ID</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="eq-rows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="tab-users" class="fade-in" style="display:none">
+      <div class="card">
+        <h3>Users</h3>
+        <div class="hint" id="users-warning" style="display:none">
+          <span class="warn">⚠</span> Callable Functions not detected. Deploy <code>admin_createUser / admin_updateUser / admin_deleteUser / admin_listUsers</code> or update the function names below.
+        </div>
+        <div class="spacer"></div>
+        <div class="grid g-5">
+          <input id="u-email" class="input" placeholder="email">
+          <input id="u-pass" class="input" placeholder="password (≥6)">
+          <input id="u-name" class="input" placeholder="displayName">
+          <select id="u-role" class="select">
+            <option>user</option><option>technician</option><option>station_admin</option>
+            <option>regional_admin</option><option>org_admin</option><option>global_admin</option>
+          </select>
+          <input id="u-scope" class="input" placeholder='scope JSON (e.g., {"orgId":"primeflight","stationId":"BNA"})'>
+        </div>
+        <div class="spacer"></div>
+        <button id="u-create" class="btn">Create User</button>
+      </div>
+      <div class="spacer"></div>
+      <div class="card">
+        <div class="row"><h3 class="grow">All Users</h3><button id="u-refresh" class="btn alt">Refresh</button></div>
+        <div class="spacer"></div>
+        <table>
+          <thead><tr><th>Email</th><th>Name</th><th>Role</th><th>Actions</th></tr></thead>
+          <tbody id="u-rows"></tbody>
+        </table>
+      </div>
+    </section>
   </div>
 
-  <!-- Edit User Modal -->
-  <div id="editUserModal" class="modal">
-    <div class="modal-content">
-      <h3>Edit User</h3>
-      <form id="editUserForm">
-        <input type="hidden" id="editUserId" />
-        <label>
-          <span>Full Name</span>
-          <input type="text" id="editUserName" required />
-        </label>
-        <label style="margin-top: 16px;">
-          <span>Email</span>
-          <input type="email" id="editUserEmail" required />
-        </label>
-        <label style="margin-top: 16px;">
-          <span>Role</span>
-          <select id="editUserRole">
-            <option value="user">User</option>
-            <option value="tech">Technician</option>
-            <option value="admin">Admin</option>
-          </select>
-        </label>
-        <label style="margin-top: 16px;">
-          <span>Station</span>
-          <select id="editUserStation">
-            <option>LAX - Los Angeles</option>
-            <option>JFK - New York</option>
-            <option>ORD - Chicago</option>
-            <option>DFW - Dallas</option>
-          </select>
-        </label>
-        <div class="modal-actions">
-          <button type="button" class="btn ghost" onclick="closeModal('editUserModal')">Cancel</button>
-          <button type="submit" class="btn primary">Save Changes</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Add Equipment Modal -->
-  <div id="addEquipmentModal" class="modal">
-    <div class="modal-content">
-      <h3>Add New Equipment</h3>
-      <form id="addEquipmentForm">
-        <label>
-          <span>Equipment ID</span>
-          <input type="text" id="newEquipmentId" required placeholder="e.g., FUEL-LAX-001" />
-        </label>
-        <label style="margin-top: 16px;">
-          <span>Type</span>
-          <select id="newEquipmentType">
-            <option>Hydrant Cart</option>
-            <option>Fuel Truck</option>
-            <option>Dispenser</option>
-            <option>Filter Unit</option>
-            <option>Pump System</option>
-          </select>
-        </label>
-        <label style="margin-top: 16px;">
-          <span>Location</span>
-          <select id="newEquipmentLocation">
-            <option>LAX - Los Angeles</option>
-            <option>JFK - New York</option>
-            <option>ORD - Chicago</option>
-            <option>DFW - Dallas</option>
-          </select>
-        </label>
-        <label style="margin-top: 16px;">
-          <span>Status</span>
-          <select id="newEquipmentStatus">
-            <option value="active">Active</option>
-            <option value="maintenance">Maintenance</option>
-            <option value="inactive">Inactive</option>
-          </select>
-        </label>
-        <div class="modal-actions">
-          <button type="button" class="btn ghost" onclick="closeModal('addEquipmentModal')">Cancel</button>
-          <button type="submit" class="btn primary">Add Equipment</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- Edit Equipment Modal -->
-  <div id="editEquipmentModal" class="modal">
-    <div class="modal-content">
-      <h3>Edit Equipment</h3>
-      <form id="editEquipmentForm">
-        <input type="hidden" id="editEquipmentIndex" />
-        <label>
-          <span>Equipment ID</span>
-          <input type="text" id="editEquipmentId" required />
-        </label>
-        <label style="margin-top: 16px;">
-          <span>Type</span>
-          <select id="editEquipmentType">
-            <option>Hydrant Cart</option>
-            <option>Fuel Truck</option>
-            <option>Dispenser</option>
-            <option>Filter Unit</option>
-            <option>Pump System</option>
-          </select>
-        </label>
-        <label style="margin-top: 16px;">
-          <span>Location</span>
-          <select id="editEquipmentLocation">
-            <option>LAX - Los Angeles</option>
-            <option>JFK - New York</option>
-            <option>ORD - Chicago</option>
-            <option>DFW - Dallas</option>
-          </select>
-        </label>
-        <label style="margin-top: 16px;">
-          <span>Status</span>
-          <select id="editEquipmentStatus">
-            <option value="active">Active</option>
-            <option value="maintenance">Maintenance</option>
-            <option value="inactive">Inactive</option>
-          </select>
-        </label>
-        <div class="modal-actions">
-          <button type="button" class="btn ghost" onclick="closeModal('editEquipmentModal')">Cancel</button>
-          <button type="submit" class="btn primary">Save Changes</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <footer class="footer">
-    <p>© Caleb Owen 2025 • FixIt QC • Internal-friendly demo. Not affiliated with PrimeFlight Aviation Services.</p>
-  </footer>
-
-  <script defer src="assets/js/site.js"></script>
   <script>
-    // Sample data
-    let users = [
-      { id: 1, name: 'John Martinez', email: 'john.martinez@fixitqc.com', role: 'admin', station: 'LAX - Los Angeles', active: true },
-      { id: 2, name: 'Sarah Chen', email: 'sarah.chen@fixitqc.com', role: 'admin', station: 'JFK - New York', active: true },
-      { id: 3, name: 'Mike Johnson', email: 'mike.johnson@fixitqc.com', role: 'admin', station: 'ORD - Chicago', active: true },
-      { id: 4, name: 'David Rodriguez', email: 'david.rodriguez@fixitqc.com', role: 'tech', station: 'LAX - Los Angeles', active: true },
-      { id: 5, name: 'Emily Williams', email: 'emily.williams@fixitqc.com', role: 'tech', station: 'JFK - New York', active: true },
-      { id: 6, name: 'James Anderson', email: 'james.anderson@fixitqc.com', role: 'tech', station: 'ORD - Chicago', active: true },
-      { id: 7, name: 'Lisa Thompson', email: 'lisa.thompson@fixitqc.com', role: 'tech', station: 'DFW - Dallas', active: true },
-      { id: 8, name: 'Robert Garcia', email: 'robert.garcia@fixitqc.com', role: 'tech', station: 'LAX - Los Angeles', active: true },
-      { id: 9, name: 'Jennifer Lee', email: 'jennifer.lee@fixitqc.com', role: 'tech', station: 'JFK - New York', active: true },
-      { id: 10, name: 'Michael Brown', email: 'michael.brown@fixitqc.com', role: 'user', station: 'LAX - Los Angeles', active: true }
-    ];
+    // ======= CONFIG =======
+    const FUNCTIONS_REGION = 'us-central1'; // change if needed
 
-    let equipment = [
-      { id: 'FUEL-LAX-001', type: 'Hydrant Cart', location: 'LAX - Los Angeles', status: 'active', lastService: '2025-10-15' },
-      { id: 'FUEL-LAX-002', type: 'Fuel Truck', location: 'LAX - Los Angeles', status: 'active', lastService: '2025-10-20' },
-      { id: 'FUEL-JFK-001', type: 'Hydrant Cart', location: 'JFK - New York', status: 'maintenance', lastService: '2025-10-25' },
-      { id: 'FUEL-JFK-002', type: 'Dispenser', location: 'JFK - New York', status: 'active', lastService: '2025-10-18' },
-      { id: 'FUEL-ORD-001', type: 'Fuel Truck', location: 'ORD - Chicago', status: 'active', lastService: '2025-10-22' },
-      { id: 'FUEL-ORD-002', type: 'Filter Unit', location: 'ORD - Chicago', status: 'inactive', lastService: '2025-09-30' },
-      { id: 'FUEL-DFW-001', type: 'Hydrant Cart', location: 'DFW - Dallas', status: 'active', lastService: '2025-10-27' },
-      { id: 'FUEL-DFW-002', type: 'Pump System', location: 'DFW - Dallas', status: 'active', lastService: '2025-10-24' }
-    ];
-
-    // Initialize
-    document.addEventListener('DOMContentLoaded', function() {
-      renderUsers();
-      renderEquipment();
-      updateStats();
-      
-      // Tab switching
-      document.querySelectorAll('.tab').forEach(tab => {
-        tab.addEventListener('click', function() {
-          const tabName = this.dataset.tab;
-          
-          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-          
-          this.classList.add('active');
-          document.getElementById(tabName + '-content').classList.add('active');
-        });
-      });
-
-      // Form submissions
-      document.getElementById('addUserForm').addEventListener('submit', handleAddUser);
-      document.getElementById('editUserForm').addEventListener('submit', handleEditUser);
-      document.getElementById('addEquipmentForm').addEventListener('submit', handleAddEquipment);
-      document.getElementById('editEquipmentForm').addEventListener('submit', handleEditEquipment);
-    });
-
-    function renderUsers() {
-      const tbody = document.querySelector('#usersTable tbody');
-      tbody.innerHTML = users.map(user => `
-        <tr>
-          <td>${user.name}</td>
-          <td>${user.email}</td>
-          <td><span class="role-badge ${user.role}">${user.role.toUpperCase()}</span></td>
-          <td>${user.station}</td>
-          <td>
-            <span class="status-indicator ${user.active ? 'active' : 'inactive'}"></span>
-            ${user.active ? 'Active' : 'Inactive'}
-          </td>
-          <td>
-            <div class="action-btns">
-              <button class="action-btn edit" onclick="editUser(${user.id})">Edit</button>
-              ${user.role !== 'admin' ? `<button class="action-btn promote" onclick="promoteUser(${user.id})">Promote</button>` : ''}
-              <button class="action-btn delete" onclick="deleteUser(${user.id})">Delete</button>
-            </div>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    function renderEquipment() {
-      const tbody = document.querySelector('#equipmentTable tbody');
-      tbody.innerHTML = equipment.map((item, index) => `
-        <tr>
-          <td>${item.id}</td>
-          <td>${item.type}</td>
-          <td>${item.location}</td>
-          <td>
-            <span class="status-indicator ${item.status}"></span>
-            ${item.status.charAt(0).toUpperCase() + item.status.slice(1)}
-          </td>
-          <td>${item.lastService}</td>
-          <td>
-            <div class="action-btns">
-              <button class="action-btn edit" onclick="editEquipment(${index})">Edit</button>
-              <button class="action-btn delete" onclick="deleteEquipment(${index})">Delete</button>
-            </div>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    function updateStats() {
-      document.getElementById('totalUsers').textContent = users.length;
-      document.getElementById('totalEquipment').textContent = equipment.length;
-    }
-
-    function showAddUserModal() {
-      document.getElementById('addUserModal').classList.add('active');
-    }
-
-    function showAddEquipmentModal() {
-      document.getElementById('addEquipmentModal').classList.add('active');
-    }
-
-    function closeModal(modalId) {
-      document.getElementById(modalId).classList.remove('active');
-    }
-
-    function editUser(userId) {
-      const user = users.find(u => u.id === userId);
-      if (!user) return;
-      
-      document.getElementById('editUserId').value = user.id;
-      document.getElementById('editUserName').value = user.name;
-      document.getElementById('editUserEmail').value = user.email;
-      document.getElementById('editUserRole').value = user.role;
-      document.getElementById('editUserStation').value = user.station;
-      
-      document.getElementById('editUserModal').classList.add('active');
-    }
-
-    function promoteUser(userId) {
-      const user = users.find(u => u.id === userId);
-      if (!user) return;
-      
-      if (user.role === 'user') user.role = 'tech';
-      else if (user.role === 'tech') user.role = 'admin';
-      
-      renderUsers();
-    }
-
-    function deleteUser(userId) {
-      if (confirm('Are you sure you want to delete this user?')) {
-        users = users.filter(u => u.id !== userId);
-        renderUsers();
-        updateStats();
+    // ======= UTIL =======
+    const $ = sel => document.querySelector(sel);
+    const el = (tag, attrs={}, ...kids) => {
+      const n = document.createElement(tag);
+      for(const [k,v] of Object.entries(attrs)){
+        if(k==='class') n.className=v; else if(k==='style') n.style.cssText=v; else n.setAttribute(k,v);
       }
-    }
+      for(const kid of kids){ n.append(kid); }
+      return n;
+    };
+    const fmt = v => v==null?'':String(v);
 
-    function editEquipment(index) {
-      const item = equipment[index];
-      
-      document.getElementById('editEquipmentIndex').value = index;
-      document.getElementById('editEquipmentId').value = item.id;
-      document.getElementById('editEquipmentType').value = item.type;
-      document.getElementById('editEquipmentLocation').value = item.location;
-      document.getElementById('editEquipmentStatus').value = item.status;
-      
-      document.getElementById('editEquipmentModal').classList.add('active');
-    }
-
-    function deleteEquipment(index) {
-      if (confirm('Are you sure you want to delete this equipment?')) {
-        equipment.splice(index, 1);
-        renderEquipment();
-        updateStats();
-      }
-    }
-
-    function handleAddUser(e) {
-      e.preventDefault();
-      
-      const newUser = {
-        id: Math.max(...users.map(u => u.id)) + 1,
-        name: document.getElementById('newUserName').value,
-        email: document.getElementById('newUserEmail').value,
-        role: document.getElementById('newUserRole').value,
-        station: document.getElementById('newUserStation').value,
-        active: true
-      };
-      
-      users.push(newUser);
-      renderUsers();
-      updateStats();
-      closeModal('addUserModal');
-      e.target.reset();
-    }
-
-    function handleEditUser(e) {
-      e.preventDefault();
-      
-      const userId = parseInt(document.getElementById('editUserId').value);
-      const user = users.find(u => u.id === userId);
-      
-      if (user) {
-        user.name = document.getElementById('editUserName').value;
-        user.email = document.getElementById('editUserEmail').value;
-        user.role = document.getElementById('editUserRole').value;
-        user.station = document.getElementById('editUserStation').value;
-        
-        renderUsers();
-        closeModal('editUserModal');
-      }
-    }
-
-    function handleAddEquipment(e) {
-      e.preventDefault();
-      
-      const newEquipment = {
-        id: document.getElementById('newEquipmentId').value,
-        type: document.getElementById('newEquipmentType').value,
-        location: document.getElementById('newEquipmentLocation').value,
-        status: document.getElementById('newEquipmentStatus').value,
-        lastService: new Date().toISOString().split('T')[0]
-      };
-      
-      equipment.push(newEquipment);
-      renderEquipment();
-      updateStats();
-      closeModal('addEquipmentModal');
-      e.target.reset();
-    }
-
-    function handleEditEquipment(e) {
-      e.preventDefault();
-      
-      const index = parseInt(document.getElementById('editEquipmentIndex').value);
-      
-      equipment[index] = {
-        id: document.getElementById('editEquipmentId').value,
-        type: document.getElementById('editEquipmentType').value,
-        location: document.getElementById('editEquipmentLocation').value,
-        status: document.getElementById('editEquipmentStatus').value,
-        lastService: equipment[index].lastService
-      };
-      
-      renderEquipment();
-      closeModal('editEquipmentModal');
-    }
-
-    // Close modals on outside click
-    document.querySelectorAll('.modal').forEach(modal => {
-      modal.addEventListener('click', function(e) {
-        if (e.target === this) {
-          this.classList.remove('active');
+    // ======= TABS =======
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(t=>{
+      t.addEventListener('click', ()=>{
+        tabs.forEach(b=>b.classList.remove('active'));
+        t.classList.add('active');
+        const name = t.dataset.tab;
+        for(const sec of document.querySelectorAll('section[id^="tab-"]')){
+          sec.style.display = (sec.id === 'tab-'+name) ? '' : 'none';
         }
       });
     });
+
+    // ======= AUTH GATE =======
+    const badge = $('#userBadge');
+    const gate = $('#gate');
+    const signOutBtn = $('#signOutBtn');
+
+    function setBadge(text){ badge.textContent = text; }
+
+    function isAdminClaims(claims){
+      if(!claims) return false;
+      if (claims.admin === true) return true;
+      const role = claims.role;
+      return ['station_admin','regional_admin','org_admin','global_admin'].includes(role);
+    }
+
+    function parseJwtClaims(idToken){
+      try{
+        const payload = JSON.parse(atob(idToken.split('.')[1]));
+        return payload||{};
+      }catch{return {}}
+    }
+
+    function requireFirebase(){
+      if(!window.firebase || !firebase.apps?.length){
+        throw new Error('Firebase not loaded/initialized on this page. Ensure your existing scripts run before admin.html.');
+      }
+    }
+
+    // ======= BOOT =======
+    let db, fx, auth;
+    let call = {};
+    let callablesOk = false;
+
+    async function boot(){
+      try{
+        requireFirebase();
+        auth = firebase.auth();
+        db = firebase.firestore();
+        fx = firebase.app().functions(FUNCTIONS_REGION);
+
+        // Callable function handles
+        call.createUser = fx.httpsCallable('admin_createUser');
+        call.updateUser = fx.httpsCallable('admin_updateUser');
+        call.deleteUser = fx.httpsCallable('admin_deleteUser');
+        call.listUsers  = fx.httpsCallable('admin_listUsers');
+
+        // Probe callable presence quickly (won’t throw if not deployed until invoked, so we’ll lazy-detect)
+        callablesOk = true;
+      }catch(e){
+        console.error(e);
+        setBadge('Firebase missing');
+        alert('Firebase not loaded. Make sure your existing site includes and initializes Firebase before this file.');
+        return;
+      }
+
+      auth.onAuthStateChanged(async (user)=>{
+        if(!user){
+          setBadge('Not signed in');
+          gate.style.display = '';
+          $('#tab-orgs').style.display = 'none';
+          $('#tab-stations').style.display = 'none';
+          $('#tab-equipment').style.display = 'none';
+          $('#tab-users').style.display = 'none';
+          return;
+        }
+        setBadge(user.email || 'Signed in');
+
+        const token = await user.getIdToken(true);
+        const claims = parseJwtClaims(token);
+
+        if(!isAdminClaims(claims)){
+          gate.style.display = '';
+          $('#tab-orgs').style.display = 'none';
+          $('#tab-stations').style.display = 'none';
+          $('#tab-equipment').style.display = 'none';
+          $('#tab-users').style.display = 'none';
+          return;
+        }
+        gate.style.display = 'none';
+
+        // init tabs content
+        bindOrgs();
+        bindStations();
+        bindEquipment();
+        bindUsers();
+      });
+
+      signOutBtn.addEventListener('click', ()=>auth.signOut());
+    }
+
+    // ======= ORGS =======
+    function bindOrgs(){
+      const name = $('#org-name'), code = $('#org-code');
+      const add = $('#org-add'), rows = $('#org-rows'), refresh = $('#org-refresh');
+
+      async function load(){
+        const snap = await db.collection('organizations').orderBy('name').get();
+        rows.innerHTML = '';
+        snap.forEach(doc=>{
+          const o = { id:doc.id, ...doc.data() };
+          const tr = el('tr', {}, 
+            el('td', {}, el('input',{class:'input', value:fmt(o.name)})),
+            el('td', {}, el('input',{class:'input', value:fmt(o.code)})),
+            el('td', {},
+              el('div',{class:'row'},
+                el('button',{class:'btn alt', onclick:async ()=>{
+                  const nv = tr.children[0].querySelector('input').value.trim();
+                  const cv = tr.children[1].querySelector('input').value.trim();
+                  await db.collection('organizations').doc(o.id).set({name:nv, code:cv},{merge:true});
+                }}, 'Save'),
+                el('button',{class:'btn danger', onclick:async ()=>{
+                  if(confirm('Delete organization and its stations/equipment references?')) {
+                    await db.collection('organizations').doc(o.id).delete();
+                    tr.remove();
+                  }
+                }}, 'Delete')
+              )
+            )
+          );
+          rows.append(tr);
+        });
+      }
+      add.onclick = async ()=>{
+        const n = name.value.trim(), c = code.value.trim();
+        if(!n || !c) return alert('Name and Code are required');
+        await db.collection('organizations').add({ name:n, code:c, createdAt: Date.now() });
+        name.value=''; code.value='';
+        await load();
+      };
+      refresh.onclick = load;
+      load();
+    }
+
+    // ======= STATIONS =======
+    function bindStations(){
+      const orgId = $('#st-orgId'), name = $('#st-name'), code = $('#st-code');
+      const add = $('#st-add'), rows = $('#st-rows'), refresh = $('#st-refresh');
+
+      async function load(){
+        const snap = await db.collection('stations').orderBy('code').get();
+        rows.innerHTML = '';
+        snap.forEach(doc=>{
+          const s = { id:doc.id, ...doc.data() };
+          const tr = el('tr', {},
+            el('td', {}, el('input',{class:'input', value:fmt(s.orgId)})),
+            el('td', {}, el('input',{class:'input', value:fmt(s.name)})),
+            el('td', {}, el('input',{class:'input', value:fmt(s.code)})),
+            el('td', {},
+              el('div',{class:'row'},
+                el('button',{class:'btn alt', onclick:async ()=>{
+                  const o = tr.children[0].querySelector('input').value.trim();
+                  const n = tr.children[1].querySelector('input').value.trim();
+                  const c = tr.children[2].querySelector('input').value.trim();
+                  await db.collection('stations').doc(s.id).set({orgId:o, name:n, code:c},{merge:true});
+                }}, 'Save'),
+                el('button',{class:'btn danger', onclick:async ()=>{
+                  if(confirm('Delete station?')) { await db.collection('stations').doc(s.id).delete(); tr.remove(); }
+                }}, 'Delete')
+              )
+            )
+          );
+          rows.append(tr);
+        });
+      }
+      add.onclick = async ()=>{
+        const o = orgId.value.trim(), n = name.value.trim(), c = code.value.trim();
+        if(!o || !n || !c) return alert('orgId, name, code required');
+        await db.collection('stations').add({ orgId:o, name:n, code:c, createdAt: Date.now() });
+        orgId.value=''; name.value=''; code.value='';
+        await load();
+      };
+      refresh.onclick = load;
+      load();
+    }
+
+    // ======= EQUIPMENT =======
+    function bindEquipment(){
+      const stationId = $('#eq-stationId'), eid = $('#eq-id'), typ = $('#eq-type'), status = $('#eq-status');
+      const add = $('#eq-add'), rows = $('#eq-rows'), refresh = $('#eq-refresh');
+
+      async function load(){
+        const snap = await db.collection('equipment').orderBy('equipmentId').get();
+        rows.innerHTML = '';
+        snap.forEach(doc=>{
+          const e = { id:doc.id, ...doc.data() };
+          const tr = el('tr', {},
+            el('td', {}, el('input',{class:'input', value:fmt(e.stationId)})),
+            el('td', {}, el('input',{class:'input', value:fmt(e.equipmentId)})),
+            el('td', {}, el('input',{class:'input', value:fmt(e.type)})),
+            el('td', {},
+              el('div',{class:'row'},
+                el('select',{class:'select', value:fmt(e.status)},
+                  el('option',{value:'green'},'green'),
+                  el('option',{value:'yellow'},'yellow'),
+                  el('option',{value:'red'},'red')
+                )
+              )
+            ),
+            el('td', {},
+              el('div',{class:'row'},
+                el('button',{class:'btn alt', onclick:async ()=>{
+                  const s = tr.children[0].querySelector('input').value.trim();
+                  const i = tr.children[1].querySelector('input').value.trim();
+                  const t = tr.children[2].querySelector('input').value.trim();
+                  const st = tr.children[3].querySelector('select').value;
+                  await db.collection('equipment').doc(e.id).set({stationId:s, equipmentId:i, type:t, status:st},{merge:true});
+                }}, 'Save'),
+                el('button',{class:'btn danger', onclick:async ()=>{
+                  if(confirm('Delete equipment?')) { await db.collection('equipment').doc(e.id).delete(); tr.remove(); }
+                }}, 'Delete')
+              )
+            )
+          );
+          rows.append(tr);
+        });
+      }
+      add.onclick = async ()=>{
+        const s = stationId.value.trim(), i = eid.value.trim(), t = typ.value.trim(), st = status.value;
+        if(!s || !i || !t) return alert('stationId, equipmentId, type required');
+        await db.collection('equipment').add({ stationId:s, equipmentId:i, type:t, status:st, createdAt: Date.now() });
+        stationId.value=''; eid.value=''; typ.value=''; status.value='green';
+        await load();
+      };
+      refresh.onclick = load;
+      load();
+    }
+
+    // ======= USERS (via callable functions) =======
+    function bindUsers(){
+      const warn = $('#users-warning');
+      if(!call || !call.createUser) { warn.style.display = ''; return; }
+      warn.style.display = callablesOk ? 'none' : '';
+
+      const email = $('#u-email'), pass = $('#u-pass'), name = $('#u-name'),
+            role = $('#u-role'), scope = $('#u-scope');
+      const create = $('#u-create'), refresh = $('#u-refresh'), rows = $('#u-rows');
+
+      async function load(){
+        try{
+          const res = await call.listUsers({ maxResults: 1000 });
+          const users = (res.data && res.data.users) ? res.data.users : [];
+          rows.innerHTML = '';
+          for(const u of users){
+            const r = (u.customClaims && (u.customClaims.role || (u.customClaims.admin ? 'admin' : 'user'))) || 'user';
+            const tr = el('tr', {},
+              el('td', {}, fmt(u.email)),
+              el('td', {}, el('input',{class:'input', value:fmt(u.displayName||'')})),
+              el('td', {}, el('select',{class:'select', value:r},
+                  ...['user','technician','station_admin','regional_admin','org_admin','global_admin'].map(x=>el('option',{value:x},x))
+              )),
+              el('td', {},
+                el('div',{class:'row'},
+                  el('button',{class:'btn alt', onclick:async ()=>{
+                    const dn = tr.children[1].querySelector('input').value.trim();
+                    const rl = tr.children[2].querySelector('select').value;
+                    // optional scope update: prompt for quick edit
+                    let sc = prompt('Scope JSON (leave empty to keep)', '{}');
+                    let parsed = {};
+                    if(sc && sc.trim()){
+                      try{ parsed = JSON.parse(sc) }catch{ alert('Invalid JSON; ignoring scope'); }
+                    }
+                    await call.updateUser({ uid:u.uid, displayName: dn, role: rl, scope: parsed });
+                    await load();
+                  }}, 'Update'),
+                  el('button',{class:'btn danger', onclick:async ()=>{
+                    if(confirm('Delete user '+(u.email||u.uid)+'?')){
+                      await call.deleteUser({ uid:u.uid });
+                      await load();
+                    }
+                  }}, 'Delete')
+                )
+              )
+            );
+            rows.append(tr);
+          }
+        }catch(e){
+          console.error(e);
+          warn.style.display = '';
+        }
+      }
+
+      create.addEventListener('click', async ()=>{
+        try{
+          const data = {
+            email: email.value.trim(),
+            password: pass.value.trim(),
+            displayName: name.value.trim(),
+            role: role.value,
+            scope: {}
+          };
+          if(scope.value.trim()){
+            try{ data.scope = JSON.parse(scope.value.trim()); }catch{ return alert('Scope must be valid JSON'); }
+          }
+          if(!data.email || !data.password) return alert('Email and password required');
+          await call.createUser(data);
+          email.value=''; pass.value=''; name.value=''; role.value='user'; scope.value='';
+          await load();
+        }catch(e){ alert(e.message || String(e)); }
+      });
+
+      refresh.addEventListener('click', load);
+      load();
+    }
+
+    // Kick off
+    boot();
   </script>
 </body>
 </html>
