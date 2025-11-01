@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Simple Firebase Test - FixIt QC</title>
+  <style>
+    body {
+      font-family: 'Courier New', monospace;
+      background: #1a1a1a;
+      color: #00ff00;
+      padding: 40px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 { color: #ec9c42; }
+    .test { 
+      background: #000; 
+      padding: 20px; 
+      margin: 20px 0; 
+      border-left: 4px solid #00ff00;
+      border-radius: 4px;
+    }
+    .error { border-left-color: #ff0000; color: #ff0000; }
+    .success { border-left-color: #00ff00; }
+    .warning { border-left-color: #ff9900; color: #ff9900; }
+    button {
+      background: #ec9c42;
+      color: #000;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 8px;
+      margin: 10px 5px;
+    }
+    button:hover { background: #ffa94d; }
+    .log { margin: 5px 0; }
+    pre { 
+      background: #000; 
+      padding: 10px; 
+      overflow-x: auto;
+      border: 1px solid #333;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧪 FixIt QC - Simple Firebase Test</h1>
+  <p>This page tests basic Firebase functionality step-by-step.</p>
+  
+  <div id="output"></div>
+  
+  <div>
+    <button onclick="testAuth()">1. Test Auth State</button>
+    <button onclick="testFirestoreRead()">2. Test Firestore Read</button>
+    <button onclick="testFirestoreWrite()">3. Test Firestore Write</button>
+    <button onclick="clearLogs()">Clear Logs</button>
+  </div>
+  
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+    import { getFirestore, collection, getDocs, addDoc, query, where } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyD9xVIvW_zv-LqCZ9Ff-cLnxoxwTy3xVRE",
+      authDomain: "fixit-prod-71fcb.firebaseapp.com",
+      projectId: "fixit-prod-71fcb",
+      storageBucket: "fixit-prod-71fcb.firebasestorage.app",
+      messagingSenderId: "513782332933",
+      appId: "1:513782332933:web:51a84ea5a26c2130eac7ec"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    
+    window.auth = auth;
+    window.db = db;
+    
+    function log(message, type = 'success') {
+      const div = document.createElement('div');
+      div.className = `test ${type}`;
+      div.innerHTML = `<div class="log">${message}</div>`;
+      document.getElementById('output').appendChild(div);
+      console.log(message);
+      
+      // Auto-scroll to bottom
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+    
+    window.clearLogs = function() {
+      document.getElementById('output').innerHTML = '';
+    };
+    
+    // Auto-check on load
+    log('🚀 Page loaded. Firebase initialized.', 'success');
+    
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        log(`✅ Auth State: SIGNED IN as ${user.email}`, 'success');
+        log(`   User UID: <code>${user.uid}</code>`, 'success');
+      } else {
+        log('❌ Auth State: NOT SIGNED IN', 'error');
+        log('   Go to <a href="/login.html" style="color: #ec9c42;">/login.html</a> to sign in', 'warning');
+      }
+    });
+    
+    window.testAuth = async function() {
+      log('🔐 Testing Authentication...', 'warning');
+      
+      const user = auth.currentUser;
+      
+      if (!user) {
+        log('❌ FAIL: No user signed in', 'error');
+        log('   You need to sign in at /login.html first', 'error');
+        return;
+      }
+      
+      log('✅ PASS: User is signed in', 'success');
+      log(`   Email: ${user.email}`, 'success');
+      log(`   UID: ${user.uid}`, 'success');
+      log(`   Email Verified: ${user.emailVerified}`, 'success');
+    };
+    
+    window.testFirestoreRead = async function() {
+      log('📖 Testing Firestore Read...', 'warning');
+      
+      const user = auth.currentUser;
+      
+      if (!user) {
+        log('❌ FAIL: Must be signed in to test Firestore', 'error');
+        return;
+      }
+      
+      try {
+        log('   Reading users collection...', 'warning');
+        const usersRef = collection(db, 'users');
+        const snapshot = await getDocs(usersRef);
+        
+        log(`✅ PASS: Read ${snapshot.size} user(s) from Firestore`, 'success');
+        
+        // Show user documents
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          log(`   User: ${data.email || 'No email'} | Role: ${data.role || 'No role'}`, 'success');
+        });
+        
+        // Now search for current user
+        log(`   Searching for user with authId: ${user.uid}...`, 'warning');
+        const q = query(usersRef, where('authId', '==', user.uid));
+        const userSnapshot = await getDocs(q);
+        
+        if (userSnapshot.empty) {
+          log('❌ PROBLEM: No user document found for your UID', 'error');
+          log(`   Your UID: ${user.uid}`, 'error');
+          log('   This is why you get "missing admin-claims"!', 'error');
+          log('   FIX: Create a user document in Firestore with authId matching your UID', 'warning');
+        } else {
+          const userData = userSnapshot.docs[0].data();
+          log('✅ FOUND: Your user document exists!', 'success');
+          log(`   authId: ${userData.authId}`, 'success');
+          log(`   email: ${userData.email}`, 'success');
+          log(`   role: ${userData.role}`, 'success');
+          log(`   active: ${userData.active}`, 'success');
+          
+          if (userData.role !== 'globalAdmin' && userData.role !== 'localAdmin') {
+            log(`⚠️  WARNING: Your role is "${userData.role}" - not admin!`, 'warning');
+            log('   Change role to "globalAdmin" to access admin console', 'warning');
+          } else {
+            log('✅ Your role is admin - you should have access!', 'success');
+          }
+        }
+        
+      } catch (error) {
+        log(`❌ FAIL: ${error.message}`, 'error');
+        log(`   Error code: ${error.code}`, 'error');
+        log(`   Full error: <pre>${JSON.stringify(error, null, 2)}</pre>`, 'error');
+      }
+    };
+    
+    window.testFirestoreWrite = async function() {
+      log('📝 Testing Firestore Write...', 'warning');
+      
+      const user = auth.currentUser;
+      
+      if (!user) {
+        log('❌ FAIL: Must be signed in to test Firestore', 'error');
+        return;
+      }
+      
+      try {
+        const testOrg = {
+          name: 'Test Organization ' + Date.now(),
+          contactEmail: 'test@example.com',
+          phone: '555-1234',
+          active: true,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+        
+        log('   Creating test organization...', 'warning');
+        const docRef = await addDoc(collection(db, 'organizations'), testOrg);
+        
+        log('✅ PASS: Successfully created organization!', 'success');
+        log(`   Document ID: ${docRef.id}`, 'success');
+        log('   Check Firebase Console to verify', 'success');
+        
+      } catch (error) {
+        log(`❌ FAIL: ${error.message}`, 'error');
+        log(`   Error code: ${error.code}`, 'error');
+        
+        if (error.code === 'permission-denied') {
+          log('   This means Firestore security rules are blocking you', 'error');
+          log('   Check your Firestore Rules in Firebase Console', 'warning');
+        }
+      }
+    };
+  </script>
+</body>
+</html>
