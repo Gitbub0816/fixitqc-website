@@ -1,418 +1,690 @@
 <!doctype html>
-<html lang="en">
+<html lang='en'>
 <head>
+  <!-- FixIt QC Marketing Site v7.0 • Built 2025-10-29 -->
   <meta charset="utf-8" />
-  <title>FixIt Admin Console</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+  <title>Admin Console — FixIt QC</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/site.css" />
+  
+  <!-- IMMEDIATE AUTH WALL - Hide everything until authenticated -->
   <style>
-    :root{ --baseLo:#1A1C22; --baseHi:#262A32; --violetTop:#361C56; --copper:#EC9C42;
-           --ink:#E8EAF0; --muted:#B6BBC6; --ring:rgba(236,156,66,.35); --card:rgba(38,42,50,.72); }
-    html,body{margin:0;padding:0;background:var(--baseLo);color:var(--ink);
-      font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial}
-    a{color:var(--copper);text-decoration:none}
-    .wrap{max-width:1100px;margin:0 auto;padding:20px}
-    header{position:sticky;top:0;z-index:50;backdrop-filter:saturate(120%) blur(8px);
-      background:linear-gradient(180deg, rgba(26,28,34,.85), rgba(26,28,34,.55));
-      border-bottom:1px solid rgba(255,255,255,.08)}
-    .brand{display:flex;align-items:center;gap:10px;padding:14px 20px}
-    .dot{width:14px;height:14px;border-radius:10px;background:var(--copper);box-shadow:0 0 18px var(--ring)}
-    .kicker{font-size:11px;color:var(--muted);margin-top:-4px}
-    nav.tabs{display:flex;gap:8px;padding:0 20px 14px 20px;flex-wrap:wrap}
-    .tab{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);padding:8px 12px;
-      border-radius:12px;font-weight:600;letter-spacing:.2px;cursor:pointer}
-    .tab.active{background:rgba(255,255,255,.15)}
-    .pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.08);
-      border:1px solid rgba(255,255,255,.12);padding:6px 10px;border-radius:999px;font-size:12px}
-    .btn{background:var(--copper);color:#111;border:0;padding:8px 12px;border-radius:12px;font-weight:700;
-      cursor:pointer;box-shadow:0 0 18px var(--ring);transition:transform .05s}
-    .btn:active{transform:translateY(1px)} .btn.alt{background:transparent;color:var(--ink);border:1px solid rgba(255,255,255,.18)}
-    .grid{display:grid;gap:12px}.g-3{grid-template-columns:repeat(3,1fr)}
-    .g-4{grid-template-columns:repeat(4,1fr)}.g-5{grid-template-columns:repeat(5,1fr)}
-    @media(max-width:900px){.g-3,.g-4,.g-5{grid-template-columns:1fr}}
-    .card{background:var(--card);border:1px solid rgba(255,255,255,.10);border-radius:18px;padding:16px;
-      box-shadow:0 0 24px var(--ring), inset 0 1px 0 rgba(255,255,255,.05)}
-    .hint{font-size:12px;color:var(--muted)} .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    .input,.select{width:100%;padding:10px 12px;border-radius:12px;outline:none;border:1px solid rgba(255,255,255,.14);
-      background:rgba(0,0,0,.25);color:var(--ink)}
-    .input:focus,.select:focus{border-color:var(--copper);box-shadow:0 0 0 3px rgba(236,156,66,.15)}
-    table{width:100%;border-collapse:collapse;font-size:14px} th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,.08)}
-    tbody tr:hover{background:rgba(255,255,255,.04)} .danger{background:#ef4444;color:white}
-    .center{display:flex;align-items:center;justify-content:center;min-height:38vh;text-align:center}
-    .statusbar{position:sticky;bottom:0;left:0;right:0;background:rgba(0,0,0,.35);backdrop-filter:blur(6px);
-      border-top:1px solid rgba(255,255,255,.08);padding:8px 14px;font-size:12px;color:#e5e7eb}
-    .statusbar b{color:var(--copper)}
+    /* Hide admin content by default */
+    #adminContent {
+      display: none;
+    }
+    
+    /* Auth wall styling */
+    #authWall {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: var(--bg);
+      padding: 20px;
+    }
+    
+    #authWall .wall-content {
+      text-align: center;
+      max-width: 500px;
+      padding: 60px 40px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      backdrop-filter: blur(20px);
+    }
+    
+    #authWall .lock-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 24px;
+      padding: 20px;
+      background: rgba(236, 156, 66, 0.1);
+      border-radius: 50%;
+      border: 2px solid var(--copper);
+    }
+    
+    #authWall .lock-icon svg {
+      width: 100%;
+      height: 100%;
+      stroke: var(--copper);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    
+    #authWall h1 {
+      font-size: 2rem;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+    
+    #authWall p {
+      color: var(--muted);
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+    
+    #authWall .btn-login {
+      display: inline-block;
+      padding: 14px 32px;
+      background: var(--copper);
+      color: var(--bg);
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    
+    #authWall .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(236, 156, 66, 0.4);
+    }
+    
+    #authWall .loading {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 20px;
+    }
+    
+    #authWall .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(236, 156, 66, 0.2);
+      border-top-color: var(--copper);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
   </style>
-
-  <!-- Firebase compat SDKs (CDN) -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-functions-compat.js"></script>
+  
+  <script type="module" src="assets/js/admin.mjs"></script>
 </head>
 <body>
-  <header>
-    <div class="brand">
-      <div class="dot"></div>
-      <div>
-        <div style="font-weight:800;letter-spacing:.3px">FixIt Admin Console</div>
-        <div class="kicker">Charcoal · Copper · Dark Violet — glass cards</div>
+  
+  <!-- AUTH WALL - Shown until authenticated -->
+  <div id="authWall">
+    <div class="wall-content">
+      <div class="lock-icon">
+        <svg viewBox="0 0 24 24">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
       </div>
-      <div style="margin-left:auto" id="userBadge" class="pill">checking auth…</div>
-    </div>
-    <nav class="tabs">
-      <button class="tab active" data-tab="orgs">Organizations</button>
-      <button class="tab" data-tab="stations">Stations</button>
-      <button class="tab" data-tab="equipment">Equipment</button>
-      <button class="tab" data-tab="users">Users</button>
-    </nav>
-  </header>
-
-  <div class="wrap">
-    <div id="gate" class="center" style="display:none">
-      <div class="card" style="max-width:560px">
-        <h2 style="margin:0 0 6px 0">Access restricted</h2>
-        <div class="hint">Admin claims required: <b>admin=true</b> or role ∈ {station_admin, regional_admin, org_admin, global_admin}</div>
-        <div class="row" style="margin-top:10px"><button id="signOutBtn" class="btn alt">Sign out</button></div>
+      <h1>Authentication Required</h1>
+      <p id="authMessage">Checking authentication...</p>
+      <div class="loading" id="authLoading">
+        <span class="spinner"></span>
+        Verifying credentials...
+      </div>
+      <div id="authActions" style="display: none;">
+        <a href="login.html" class="btn-login">Sign In to Continue</a>
+        <p style="margin-top: 20px; font-size: 0.9rem;">
+          Don't have access? Contact your administrator.
+        </p>
       </div>
     </div>
-
-    <!-- Orgs -->
-    <section id="tab-orgs">
-      <div class="card">
-        <h3>Organizations</h3>
-        <div class="grid g-3">
-          <input id="org-name" class="input" placeholder="Name">
-          <input id="org-code" class="input" placeholder="Code">
-          <button id="org-add" class="btn">Add Organization</button>
-        </div>
-      </div>
-      <div style="height:8px"></div>
-      <div class="card">
-        <div class="row"><h3 style="margin:0" class="grow">All Organizations</h3>
-          <button id="org-refresh" class="btn alt">Refresh</button></div>
-        <div style="height:8px"></div>
-        <table><thead><tr><th>Name</th><th>Code</th><th>Actions</th></tr></thead><tbody id="org-rows"></tbody></table>
-      </div>
-    </section>
-
-    <!-- Stations -->
-    <section id="tab-stations" style="display:none">
-      <div class="card">
-        <h3>Stations</h3>
-        <div class="grid g-4">
-          <input id="st-orgId" class="input" placeholder="orgId">
-          <input id="st-name" class="input" placeholder="Name">
-          <input id="st-code" class="input" placeholder="Code (e.g., BNA)">
-          <button id="st-add" class="btn">Add Station</button>
-        </div>
-      </div>
-      <div style="height:8px"></div>
-      <div class="card">
-        <div class="row"><h3 style="margin:0" class="grow">All Stations</h3>
-          <button id="st-refresh" class="btn alt">Refresh</button></div>
-        <div style="height:8px"></div>
-        <table><thead><tr><th>Org</th><th>Name</th><th>Code</th><th>Actions</th></tr></thead><tbody id="st-rows"></tbody></table>
-      </div>
-    </section>
-
-    <!-- Equipment -->
-    <section id="tab-equipment" style="display:none">
-      <div class="card">
-        <h3>Equipment</h3>
-        <div class="grid g-5">
-          <input id="eq-stationId" class="input" placeholder="stationId">
-          <input id="eq-id" class="input" placeholder="equipmentId">
-          <input id="eq-type" class="input" placeholder="type (e.g., TCS, Hydrant cart)">
-          <select id="eq-status" class="select">
-            <option value="green">green</option><option value="yellow">yellow</option><option value="red">red</option>
-          </select>
-          <button id="eq-add" class="btn">Add Equipment</button>
-        </div>
-      </div>
-      <div style="height:8px"></div>
-      <div class="card">
-        <div class="row"><h3 style="margin:0" class="grow">All Equipment</h3>
-          <button id="eq-refresh" class="btn alt">Refresh</button></div>
-        <div style="height:8px"></div>
-        <table><thead><tr><th>Station</th><th>ID</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead><tbody id="eq-rows"></tbody></table>
-      </div>
-    </section>
-
-    <!-- Users (via callables) -->
-    <section id="tab-users" style="display:none">
-      <div class="card">
-        <h3>Users</h3>
-        <div class="hint" id="users-warning" style="display:none">
-          ⚠ Callables not available. Deploy/enable <code>admin_createUser/admin_updateUser/admin_deleteUser/admin_listUsers</code>.
-        </div>
-        <div style="height:8px"></div>
-        <div class="grid g-5">
-          <input id="u-email" class="input" placeholder="email">
-          <input id="u-pass" class="input" placeholder="password (≥6)">
-          <input id="u-name" class="input" placeholder="displayName">
-          <select id="u-role" class="select">
-            <option>user</option><option>technician</option><option>station_admin</option>
-            <option>regional_admin</option><option>org_admin</option><option>global_admin</option>
-          </select>
-          <input id="u-scope" class="input" placeholder='scope JSON (e.g., {"orgId":"primeflight","stationId":"BNA"})'>
-        </div>
-        <div style="height:8px"></div>
-        <button id="u-create" class="btn">Create User</button>
-      </div>
-      <div style="height:8px"></div>
-      <div class="card">
-        <div class="row"><h3 style="margin:0" class="grow">All Users</h3>
-          <button id="u-refresh" class="btn alt">Refresh</button></div>
-        <div style="height:8px"></div>
-        <table><thead><tr><th>Email</th><th>Name</th><th>Role</th><th>Actions</th></tr></thead><tbody id="u-rows"></tbody></table>
-      </div>
-    </section>
   </div>
 
-  <div class="statusbar" id="status">booting…</div>
+  <!-- ADMIN CONTENT - Hidden until authenticated -->
+  <div id="adminContent">
+  <header class="nav">
+    <a class="brand" href="index.html">
+      <img src="assets/img/fixitqc-logo.png" alt="FixIt QC" class="logo" />
+    </a>
+    <button id="hamburger" aria-label="Menu" aria-expanded="false">
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
 
-  <script>
-    // Your Firebase config (exactly as provided)
-    const firebaseConfig = {
-      apiKey: "AIzaSyDIoIUMeRTNUx5U2UpQNtMC4T5XnBeTH0k",
-      authDomain: "fixit-prod-71fcb.firebaseapp.com",
-      projectId: "fixit-prod-71fcb",
-      storageBucket: "fixit-prod-71fcb.firebasestorage.app",
-      messagingSenderId: "907122953641",
-      appId: "1:907122953641:web:88109cc439e3eecb0d48b8",
-      measurementId: "G-Y4YW21JKWM"
-    };
-    const FUNCTIONS_REGION = 'us-central1'; // change if you deployed elsewhere
-  </script>
+    <!-- Cascade overlay menu -->
+    <div id="cascade" class="cascade mini">
+      <a class="mini-card" href="index.html">
+        <span class="ico">
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        </span>
+        <span>Home</span>
+      </a>
+      <a class="mini-card" href="features.html">
+        <span class="ico">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+        </span>
+        <span>Features</span>
+      </a>
+      <a class="mini-card" href="screenshots.html">
+        <span class="ico">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+        </span>
+        <span>Screenshots</span>
+      </a>
+      <a class="mini-card" href="pricing.html">
+        <span class="ico">
+          <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+        </span>
+        <span>Pricing</span>
+      </a>
+      <a class="mini-card" href="admin.html">
+        <span class="ico">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M12 1v6m0 6v6m9-9h-6m-6 0H3m15.364 6.364l-4.243-4.243m-6.364 0L3.636 19.364M19.364 4.636l-4.243 4.243m-6.364 0L4.636 4.636"></path></svg>
+        </span>
+        <span>Admin</span>
+      </a>
+      <a class="mini-card" href="contact.html">
+        <span class="ico">
+          <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+        </span>
+        <span>Contact</span>
+      </a>
+      <button id="logoutBtn" class="mini-card logout-btn" style="background: rgba(236,66,66,0.2); border-color: rgba(236,66,66,0.4);">
+        <span class="ico">
+          <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        </span>
+        <span>Logout</span>
+      </button>
+    </div>
+  </header>
 
-  <script>
-    const $ = s => document.querySelector(s);
-    const statusEl = $('#status');
-    const setStatus = (msg) => statusEl.innerHTML = msg;
+  <section class="pagehead">
+    <h2>Admin Console</h2>
+    <p class="sub">Manage users, organizations, stations, equipment, and system settings.</p>
+  </section>
 
-    // Tabs
-    document.querySelectorAll('.tab').forEach(t=>{
-      t.addEventListener('click', ()=>{
-        document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
-        t.classList.add('active');
-        const name = t.dataset.tab;
-        document.querySelectorAll('section[id^="tab-"]').forEach(sec=>{
-          sec.style.display = (sec.id === 'tab-'+name) ? '' : 'none';
-        });
-      });
-    });
+  <section class="panel glass">
+    <div id="authLoader" style="text-align: center; padding: 40px; color: var(--muted);">
+      <p style="margin-bottom: 16px;">⚡ Loading admin panel...</p>
+      <p style="font-size: 0.9rem;">If this takes more than a few seconds, you may need to <a href="login.html" style="color: var(--copper);">sign in</a>.</p>
+    </div>
+    
+    <div id="adminContent" style="display: none;">
+      <h3 style="margin-bottom: 8px;">Welcome, <span id="userEmail" style="color: var(--copper);">Admin</span></h3>
+      <p style="color: var(--muted); margin-bottom: 28px;">Manage your FixIt QC deployment from this console.</p>
+      
+      <!-- Quick Stats -->
+      <div class="admin-section">
+        <h4>Quick Stats</h4>
+        <div class="grid" style="margin-top: 12px;">
+          <div class="glass" style="padding: 20px; text-align: center;">
+            <div style="font-size: 2rem; font-weight: 800; color: var(--copper);" id="totalOrganizations">0</div>
+            <div style="color: var(--muted);">Organizations</div>
+          </div>
+          <div class="glass" style="padding: 20px; text-align: center;">
+            <div style="font-size: 2rem; font-weight: 800; color: var(--copper);" id="totalStations">0</div>
+            <div style="color: var(--muted);">Stations</div>
+          </div>
+          <div class="glass" style="padding: 20px; text-align: center;">
+            <div style="font-size: 2rem; font-weight: 800; color: var(--copper);" id="totalUsers">0</div>
+            <div style="color: var(--muted);">Total Users</div>
+          </div>
+          <div class="glass" style="padding: 20px; text-align: center;">
+            <div style="font-size: 2rem; font-weight: 800; color: var(--copper);" id="totalEquipment">0</div>
+            <div style="color: var(--muted);">Equipment Items</div>
+          </div>
+        </div>
+      </div>
 
-    // Initialize Firebase
-    let app, auth, db, fx;
-    try{
-      app = firebase.apps?.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
-      auth = firebase.auth();
-      db   = firebase.firestore();
-      fx   = firebase.app().functions(FUNCTIONS_REGION);
-      setStatus('Firebase initialized');
-    } catch(e){
-      console.error(e);
-      setStatus('❌ Firebase init failed — check config and SDKs');
-    }
+      <!-- Tabs -->
+      <div class="admin-section" style="margin-top: 40px;">
+        <div class="tabs">
+          <button class="tab active" data-tab="organizations">Organizations</button>
+          <button class="tab" data-tab="stations">Stations</button>
+          <button class="tab" data-tab="users">Users</button>
+          <button class="tab" data-tab="equipment">Equipment</button>
+        </div>
 
-    // Auth gate
-    const badge = $('#userBadge');
-    $('#signOutBtn').addEventListener('click', ()=>auth.signOut());
+        <!-- Organizations Tab -->
+        <div id="organizations-content" class="tab-content active">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h4 style="margin: 0;">Organization Management</h4>
+            <button class="btn primary" onclick="showAddOrganizationModal()">
+              <svg style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14m-7-7h14"></path>
+              </svg>
+              Add Organization
+            </button>
+          </div>
+          
+          <div class="glass" style="overflow-x: auto;">
+            <table class="admin-table" id="organizationsTable">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Stations</th>
+                  <th>Users</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Organizations will be populated here by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-    const isAdminClaims = (claims)=> claims?.admin===true ||
-      ['station_admin','regional_admin','org_admin','global_admin'].includes(claims?.role);
-    const parseClaims = (idToken)=>{ try{ return JSON.parse(atob(idToken.split('.')[1]))||{} }catch{ return {} } };
+        <!-- Stations Tab -->
+        <div id="stations-content" class="tab-content">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h4 style="margin: 0;">Station Management</h4>
+            <button class="btn primary" onclick="showAddStationModal()">
+              <svg style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14m-7-7h14"></path>
+              </svg>
+              Add Station
+            </button>
+          </div>
+          
+          <div class="glass" style="overflow-x: auto;">
+            <table class="admin-table" id="stationsTable">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Code</th>
+                  <th>Organization</th>
+                  <th>Equipment Count</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Stations will be populated here by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-    // helpers
-    function el(tag, attrs={}, ...kids){ const n=document.createElement(tag);
-      for(const [k,v] of Object.entries(attrs)){ if(k==='class') n.className=v; else if(k==='onclick') n.onclick=v; else n.setAttribute(k,v); }
-      kids.forEach(k=>n.append(k)); return n; }
+        <!-- Users Tab -->
+        <div id="users-content" class="tab-content">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h4 style="margin: 0;">User Management</h4>
+            <button class="btn primary" onclick="showAddUserModal()">
+              <svg style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14m-7-7h14"></path>
+              </svg>
+              Add User
+            </button>
+          </div>
+          
+          <div class="glass" style="overflow-x: auto;">
+            <table class="admin-table" id="usersTable">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Station</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Users will be populated here by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-    // ----- ORGS -----
-    const orgName=$('#org-name'), orgCode=$('#org-code'), orgAdd=$('#org-add'), orgRows=$('#org-rows'), orgRefresh=$('#org-refresh');
-    async function loadOrgs(){
-      const snap = await db.collection('organizations').orderBy('name').get();
-      orgRows.innerHTML='';
-      snap.forEach(doc=>{
-        const o={id:doc.id, ...doc.data()};
-        const tr=el('tr',{},
-          el('td',{}, el('input',{class:'input', value:o.name||''})),
-          el('td',{}, el('input',{class:'input', value:o.code||''})),
-          el('td',{},
-            el('button',{class:'btn alt', onclick:async()=>{
-              const nv=tr.children[0].querySelector('input').value.trim();
-              const cv=tr.children[1].querySelector('input').value.trim();
-              await db.collection('organizations').doc(o.id).set({name:nv, code:cv},{merge:true});
-            }},'Save'),
-            ' ',
-            el('button',{class:'btn danger', onclick:async()=>{
-              if(confirm('Delete organization?')){ await db.collection('organizations').doc(o.id).delete(); tr.remove(); }
-            }},'Delete')
-          )
-        ); orgRows.append(tr);
-      });
-    }
-    orgAdd.onclick = async ()=>{
-      const n=orgName.value.trim(), c=orgCode.value.trim();
-      if(!n||!c) return alert('Name and Code are required');
-      await db.collection('organizations').add({ name:n, code:c, createdAt: Date.now() });
-      orgName.value=''; orgCode.value=''; loadOrgs();
-    };
-    orgRefresh.onclick = loadOrgs;
+        <!-- Equipment Tab -->
+        <div id="equipment-content" class="tab-content">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h4 style="margin: 0;">Equipment Management</h4>
+            <button class="btn primary" onclick="showAddEquipmentModal()">
+              <svg style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 6px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14m-7-7h14"></path>
+              </svg>
+              Add Equipment
+            </button>
+          </div>
+          
+          <div class="glass" style="overflow-x: auto;">
+            <table class="admin-table" id="equipmentTable">
+              <thead>
+                <tr>
+                  <th>Equipment ID</th>
+                  <th>Type</th>
+                  <th>Location</th>
+                  <th>Status</th>
+                  <th>Last Service</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Equipment will be populated here by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    // ----- STATIONS -----
-    const stOrg=$('#st-orgId'), stName=$('#st-name'), stCode=$('#st-code'), stAdd=$('#st-add'), stRows=$('#st-rows'), stRefresh=$('#st-refresh');
-    async function loadStations(){
-      const snap = await db.collection('stations').orderBy('code').get();
-      stRows.innerHTML='';
-      snap.forEach(doc=>{
-        const s={id:doc.id, ...doc.data()};
-        const tr=el('tr',{},
-          el('td',{}, el('input',{class:'input', value:s.orgId||''})),
-          el('td',{}, el('input',{class:'input', value:s.name||''})),
-          el('td',{}, el('input',{class:'input', value:s.code||''})),
-          el('td',{},
-            el('button',{class:'btn alt', onclick:async()=>{
-              const o=tr.children[0].querySelector('input').value.trim();
-              const n=tr.children[1].querySelector('input').value.trim();
-              const c=tr.children[2].querySelector('input').value.trim();
-              await db.collection('stations').doc(s.id).set({orgId:o, name:n, code:c},{merge:true});
-            }},'Save'),
-            ' ',
-            el('button',{class:'btn danger', onclick:async()=>{
-              if(confirm('Delete station?')){ await db.collection('stations').doc(s.id).delete(); tr.remove(); }
-            }},'Delete')
-          )
-        ); stRows.append(tr);
-      });
-    }
-    stAdd.onclick = async ()=>{
-      const o=stOrg.value.trim(), n=stName.value.trim(), c=stCode.value.trim();
-      if(!o||!n||!c) return alert('orgId, name, code required');
-      await db.collection('stations').add({ orgId:o, name:n, code:c, createdAt: Date.now() });
-      stOrg.value=''; stName.value=''; stCode.value=''; loadStations();
-    };
-    stRefresh.onclick = loadStations;
+  <!-- Add Organization Modal -->
+  <div id="addOrganizationModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Add Organization</h3>
+        <button class="close-btn" onclick="closeModal('addOrganizationModal')">&times;</button>
+      </div>
+      <form id="addOrganizationForm">
+        <label>
+          <span>Organization Name *</span>
+          <input type="text" id="newOrganizationName" required />
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Contact Email</span>
+          <input type="email" id="newOrganizationContact" />
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Phone</span>
+          <input type="tel" id="newOrganizationPhone" />
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn" onclick="closeModal('addOrganizationModal')">Cancel</button>
+          <button type="submit" class="btn primary">Add Organization</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-    // ----- EQUIPMENT -----
-    const eqSt=$('#eq-stationId'), eqId=$('#eq-id'), eqType=$('#eq-type'),
-          eqStatus=$('#eq-status'), eqAdd=$('#eq-add'), eqRows=$('#eq-rows'), eqRefresh=$('#eq-refresh');
-    async function loadEquipment(){
-      const snap = await db.collection('equipment').orderBy('equipmentId').get();
-      eqRows.innerHTML='';
-      snap.forEach(doc=>{
-        const e={id:doc.id, ...doc.data()};
-        const tr=el('tr',{},
-          el('td',{}, el('input',{class:'input', value:e.stationId||''})),
-          el('td',{}, el('input',{class:'input', value:e.equipmentId||''})),
-          el('td',{}, el('input',{class:'input', value:e.type||''})),
-          el('td',{}, (function(){ const s=el('select',{class:'select'});
-            ['green','yellow','red'].forEach(v=>s.append(el('option',{value:v, ...(e.status===v?{selected:''}:{})},v))); return s; })()),
-          el('td',{},
-            el('button',{class:'btn alt', onclick:async()=>{
-              const st=tr.children[0].querySelector('input').value.trim();
-              const id=tr.children[1].querySelector('input').value.trim();
-              const ty=tr.children[2].querySelector('input').value.trim();
-              const ss=tr.children[3].querySelector('select').value;
-              await db.collection('equipment').doc(e.id).set({stationId:st, equipmentId:id, type:ty, status:ss},{merge:true});
-            }},'Save'),
-            ' ',
-            el('button',{class:'btn danger', onclick:async()=>{
-              if(confirm('Delete equipment?')){ await db.collection('equipment').doc(e.id).delete(); tr.remove(); }
-            }},'Delete')
-          )
-        ); eqRows.append(tr);
-      });
-    }
-    eqAdd.onclick = async ()=>{
-      const s=eqSt.value.trim(), i=eqId.value.trim(), t=eqType.value.trim(), st=eqStatus.value;
-      if(!s||!i||!t) return alert('stationId, equipmentId, type required');
-      await db.collection('equipment').add({ stationId:s, equipmentId:i, type:t, status:st, createdAt: Date.now() });
-      eqSt.value=''; eqId.value=''; eqType.value=''; eqStatus.value='green'; loadEquipment();
-    };
-    eqRefresh.onclick = loadEquipment;
+  <!-- Edit Organization Modal -->
+  <div id="editOrganizationModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Edit Organization</h3>
+        <button class="close-btn" onclick="closeModal('editOrganizationModal')">&times;</button>
+      </div>
+      <form id="editOrganizationForm">
+        <input type="hidden" id="editOrganizationId" />
+        <label>
+          <span>Organization Name *</span>
+          <input type="text" id="editOrganizationName" required />
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Contact Email</span>
+          <input type="email" id="editOrganizationContact" />
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Phone</span>
+          <input type="tel" id="editOrganizationPhone" />
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn" onclick="closeModal('editOrganizationModal')">Cancel</button>
+          <button type="submit" class="btn primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-    // ----- USERS (callables) -----
-    const warn=$('#users-warning');
-    let call = {};
-    try{
-      call.create = fx.httpsCallable('admin_createUser');
-      call.update = fx.httpsCallable('admin_updateUser');
-      call.remove = fx.httpsCallable('admin_deleteUser');
-      call.list   = fx.httpsCallable('admin_listUsers');
-    }catch{}
-    if(!call.list) warn.style.display='';
+  <!-- Add Station Modal -->
+  <div id="addStationModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Add Station</h3>
+        <button class="close-btn" onclick="closeModal('addStationModal')">&times;</button>
+      </div>
+      <form id="addStationForm">
+        <label>
+          <span>Station Name *</span>
+          <input type="text" id="newStationName" required />
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Station Code</span>
+          <input type="text" id="newStationCode" placeholder="e.g. LAX, JFK" />
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Location</span>
+          <input type="text" id="newStationLocation" placeholder="City, State" />
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Organization *</span>
+          <select id="newStationOrganization" required>
+            <option value="">Select Organization</option>
+          </select>
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn" onclick="closeModal('addStationModal')">Cancel</button>
+          <button type="submit" class="btn primary">Add Station</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-    const uEmail=$('#u-email'), uPass=$('#u-pass'), uName=$('#u-name'), uRole=$('#u-role'), uScope=$('#u-scope');
-    const uCreate=$('#u-create'), uRefresh=$('#u-refresh'), uRows=$('#u-rows');
+  <!-- Edit Station Modal -->
+  <div id="editStationModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Edit Station</h3>
+        <button class="close-btn" onclick="closeModal('editStationModal')">&times;</button>
+      </div>
+      <form id="editStationForm">
+        <input type="hidden" id="editStationId" />
+        <label>
+          <span>Station Name *</span>
+          <input type="text" id="editStationName" required />
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Station Code</span>
+          <input type="text" id="editStationCode" />
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Location</span>
+          <input type="text" id="editStationLocation" />
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Organization *</span>
+          <select id="editStationOrganization" required>
+            <option value="">Select Organization</option>
+          </select>
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn" onclick="closeModal('editStationModal')">Cancel</button>
+          <button type="submit" class="btn primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-    async function loadUsers(){
-      if(!call.list){ warn.style.display=''; uRows.innerHTML=''; return; }
-      try{
-        const res = await call.list({ maxResults: 1000 });
-        const users = (res.data && res.data.users) ? res.data.users : [];
-        uRows.innerHTML='';
-        users.forEach(u=>{
-          const currentRole = (u.customClaims && (u.customClaims.role || (u.customClaims.admin ? 'admin' : 'user'))) || 'user';
-          const tr=el('tr',{},
-            el('td',{}, u.email||''),
-            el('td',{}, el('input',{class:'input', value:u.displayName||''})),
-            el('td',{}, (function(){ const s=el('select',{class:'select'});
-              ['user','technician','station_admin','regional_admin','org_admin','global_admin']
-                .forEach(v=>s.append(el('option',{value:v, ...(currentRole===v?{selected:''}:{})},v)));
-              return s; })()),
-            el('td',{},
-              el('button',{class:'btn alt', onclick:async()=>{
-                const dn=tr.children[1].querySelector('input').value.trim();
-                const rl=tr.children[2].querySelector('select').value;
-                let sc='{}'; try{ sc=prompt('Scope JSON (leave empty to keep)','{}')||'{}'; }catch{}
-                let parsed={}; try{ parsed=JSON.parse(sc); }catch{ alert('Invalid JSON; ignoring scope'); }
-                await call.update({ uid:u.uid, displayName:dn, role:rl, scope:parsed });
-                await loadUsers();
-              }},'Update'),
-              ' ',
-              el('button',{class:'btn danger', onclick:async()=>{
-                if(confirm('Delete user '+(u.email||u.uid)+'?')){ await call.remove({ uid:u.uid }); await loadUsers(); }
-              }},'Delete')
-            )
-          ); uRows.append(tr);
-        });
-      }catch(e){ console.error(e); warn.style.display=''; }
-    }
+  <!-- Add User Modal -->
+  <div id="addUserModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Add User</h3>
+        <button class="close-btn" onclick="closeModal('addUserModal')">&times;</button>
+      </div>
+      <form id="addUserForm">
+        <label>
+          <span>Name *</span>
+          <input type="text" id="newUserName" required />
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Email *</span>
+          <input type="email" id="newUserEmail" required />
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Password *</span>
+          <input type="password" id="newUserPassword" required minlength="6" />
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Role *</span>
+          <select id="newUserRole" required>
+            <option value="user">User</option>
+            <option value="tech">Technician</option>
+            <option value="localAdmin">Local Admin</option>
+            <option value="globalAdmin">Global Admin</option>
+          </select>
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Organization</span>
+          <select id="newUserOrganization">
+            <option value="">Select Organization</option>
+          </select>
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Station</span>
+          <select id="newUserStation">
+            <option value="">Select Station</option>
+          </select>
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn" onclick="closeModal('addUserModal')">Cancel</button>
+          <button type="submit" class="btn primary">Add User</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-    uCreate.addEventListener('click', async ()=>{
-      if(!call.create) return alert('User callables not available');
-      const data = {
-        email: uEmail.value.trim(), password: uPass.value.trim(),
-        displayName: uName.value.trim(), role: uRole.value, scope: {}
-      };
-      if(!data.email || !data.password) return alert('Email and password required');
-      if(uScope.value.trim()){ try{ data.scope = JSON.parse(uScope.value.trim()); }catch{ return alert('Scope must be valid JSON'); } }
-      await call.create(data);
-      uEmail.value=''; uPass.value=''; uName.value=''; uRole.value='user'; uScope.value='';
-      await loadUsers();
-    });
-    uRefresh.addEventListener('click', loadUsers);
+  <!-- Edit User Modal -->
+  <div id="editUserModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Edit User</h3>
+        <button class="close-btn" onclick="closeModal('editUserModal')">&times;</button>
+      </div>
+      <form id="editUserForm">
+        <input type="hidden" id="editUserId" />
+        <label>
+          <span>Name *</span>
+          <input type="text" id="editUserName" required />
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Email *</span>
+          <input type="email" id="editUserEmail" required />
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Role *</span>
+          <select id="editUserRole" required>
+            <option value="user">User</option>
+            <option value="tech">Technician</option>
+            <option value="localAdmin">Local Admin</option>
+            <option value="globalAdmin">Global Admin</option>
+          </select>
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Organization</span>
+          <select id="editUserOrganization">
+            <option value="">Select Organization</option>
+          </select>
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Station</span>
+          <select id="editUserStation">
+            <option value="">Select Station</option>
+          </select>
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn" onclick="closeModal('editUserModal')">Cancel</button>
+          <button type="submit" class="btn primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-    // Listen for auth and gate access
-    auth.onAuthStateChanged(async (user)=>{
-      if(!user){
-        $('#tab-orgs').style.display='none'; $('#tab-stations').style.display='none';
-        $('#tab-equipment').style.display='none'; $('#tab-users').style.display='none';
-        $('#gate').style.display=''; setStatus('❌ Not signed in'); return;
-      }
-      $('#gate').style.display='none';
-      const token = await user.getIdToken(true);
-      const claims = parseClaims(token);
-      $('#userBadge').textContent = user.email || 'Signed in';
-      if(!isAdminClaims(claims)){
-        $('#gate').style.display=''; $('#tab-orgs').style.display='none';
-        $('#tab-stations').style.display='none'; $('#tab-equipment').style.display='none'; $('#tab-users').style.display='none';
-        setStatus('❌ Signed in, missing admin claims'); return;
-      }
-      await Promise.all([loadOrgs(), loadStations(), loadEquipment(), loadUsers()]);
-      setStatus(`<b>OK</b> Auth & claims · Firestore ready ${call.list ? '· Functions ready' : '· (optional) Functions not detected'}`);
-    });
-  </script>
+  <!-- Add Equipment Modal -->
+  <div id="addEquipmentModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Add Equipment</h3>
+        <button class="close-btn" onclick="closeModal('addEquipmentModal')">&times;</button>
+      </div>
+      <form id="addEquipmentForm">
+        <label>
+          <span>Equipment ID *</span>
+          <input type="text" id="newEquipmentId" required placeholder="e.g. EQ-001" />
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Type *</span>
+          <input type="text" id="newEquipmentType" required placeholder="e.g. Scanner, Printer" />
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Station *</span>
+          <select id="newEquipmentStation" required>
+            <option value="">Select Station</option>
+          </select>
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Status</span>
+          <select id="newEquipmentStatus">
+            <option value="operational">Operational</option>
+            <option value="maintenance">Maintenance</option>
+            <option value="offline">Offline</option>
+          </select>
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Last Service Date</span>
+          <input type="date" id="newEquipmentLastService" />
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Notes</span>
+          <textarea id="newEquipmentNotes" rows="3"></textarea>
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn" onclick="closeModal('addEquipmentModal')">Cancel</button>
+          <button type="submit" class="btn primary">Add Equipment</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Edit Equipment Modal -->
+  <div id="editEquipmentModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Edit Equipment</h3>
+        <button class="close-btn" onclick="closeModal('editEquipmentModal')">&times;</button>
+      </div>
+      <form id="editEquipmentForm">
+        <input type="hidden" id="editEquipmentDocId" />
+        <label>
+          <span>Equipment ID *</span>
+          <input type="text" id="editEquipmentId" required />
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Type *</span>
+          <input type="text" id="editEquipmentType" required />
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Station *</span>
+          <select id="editEquipmentStation" required>
+            <option value="">Select Station</option>
+          </select>
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Status</span>
+          <select id="editEquipmentStatus">
+            <option value="operational">Operational</option>
+            <option value="maintenance">Maintenance</option>
+            <option value="offline">Offline</option>
+          </select>
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Last Service Date</span>
+          <input type="date" id="editEquipmentLastService" />
+        </label>
+        <label style="margin-top: 16px;">
+          <span>Notes</span>
+          <textarea id="editEquipmentNotes" rows="3"></textarea>
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="btn" onclick="closeModal('editEquipmentModal')">Cancel</button>
+          <button type="submit" class="btn primary">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  </div><!-- END #adminContent -->
+
+  <script src="assets/js/site.js"></script>
 </body>
 </html>
